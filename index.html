@@ -555,13 +555,23 @@
   let activeSidebarBar = null;
 
   // ── LOAD BARS FROM FIREBASE ──
-  async function loadBars() {
-    const snapshot = await getDocs(collection(db, "bars"));
-    allBars = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    hideLoading();
-    renderMarkers(allBars);
-    updateStats(allBars.filter(b => b.price_found));
-  }
+ async function loadBars() {
+  const snapshot = await getDocs(collection(db, "bars"));
+  allBars = snapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      // Force coordinates to numbers and handle the "Ing" vs "lng" typo
+      lat: parseFloat(data.lat),
+      lng: parseFloat(data.lng || data.Ing), 
+      cheapest_beer_sek: data.cheapest_beer_sek ? parseInt(data.cheapest_beer_sek) : null
+    };
+  });
+  hideLoading();
+  renderMarkers(allBars);
+  updateStats(allBars.filter(b => b.price_found));
+}
 
   function hideLoading() {
     const el = document.getElementById('loading');
