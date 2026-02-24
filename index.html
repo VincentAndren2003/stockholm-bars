@@ -189,7 +189,9 @@ async function loadBars(){
   allBars=await Promise.all(snapshot.docs.map(async doc=>{
     const data=doc.data();
     let coords=null;
-    if(data.location && data.location!=="Address not found") coords=await geocodeAddress(data.location);
+    if(data.location && data.location!=="Address not found"){ coords=await geocodeAddress(data.location);
+    if (!coords) console.warn("Failed to geocode:", data.bar_name, data.location);
+    }
     return{
       id:doc.id,
       name:data.bar_name||doc.id,
