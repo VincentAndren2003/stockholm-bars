@@ -180,32 +180,54 @@ let allBars=[]; let markers=[]; let activeSidebarBar=null;
 async function geocodeAddress(address){
   if(!address||address==="Address not found")return null;
   const url=`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`;
-  try{const resp=await fetch(url); const data=await resp.json(); if(data.features&&data.features.length>0)return data.features[0].center;}catch(e){console.error(e);}
+  try{
+    console.log("Geocoding:", address);
+    const resp=await fetch(url);
+    const data=await resp.json();
+    if(data.features&&data.features.length>0) return data.features[0].center;
+    console.warn("Geocode returned no features for:", address, data);
+  }catch(e){console.error("Geocode error for", address, e);}
   return null;
 }
 
 async function loadBars(){
-  const snapshot=await getDocs(collection(db,"BarDetails"));
-  allBars=await Promise.all(snapshot.docs.map(async doc=>{
-    const data=doc.data();
-    let coords=null;
-    if(data.location && data.location!=="Address not found"){ coords=await geocodeAddress(data.location);
-    if (!coords) console.warn("Failed to geocode:", data.bar_name, data.location);
-    }
-    return{
-      id:doc.id,
-      name:data.bar_name||doc.id,
-      address:data.location||"Stockholm",
-      lat:coords?coords[1]:null,
-      lng:coords?coords[0]:null,
-      price_found:data.price!=null,
-      cheapest_beer_sek:data.price,
-      cheapest_beer_name:"Cheapest beer",
-      opening_hours:data.opening_hours||null,
-      last_updated:data._updateTime||null
-    };
-  }));
-  hideLoading(); renderMarkers(allBars); updateStats(allBars.filter(b=>b.price_found));
+  try{
+    const snapshot = await getDocs(collection(db,"BarDetails"));
+    console.log("Firestore: BarDetails docs count =", snapshot.size);
+    snapshot.docs.slice(0,5).forEach(d => console.log("doc sample:", d.id, d.data())); // show up to 5 samples
+
+    allBars = await Promise.all(snapshot.docs.map(async doc => {
+      const data = doc.data();
+      let coords = null;
+      if (data.location && data.location !== "Address not found") {
+        coords = await geocodeAddress(data.location);
+        if (!coords) console.warn("Failed to geocode:", data.bar_name, data.location);
+      }
+      return {
+        id: doc.id,
+        name: data.bar_name || doc.id,
+        address: data.location || "Stockholm",
+        lat: coords ? coords[1] : null,
+        lng: coords ? coords[0] : null,
+        price_found: data.price != null,
+        cheapest_beer_sek: data.price,
+        cheapest_beer_name: data.cheapest_beer_name || "Cheapest beer",
+        opening_hours: data.opening_hours || null,
+        last_updated: data._updateTime || null,
+        website: data.website || null
+      };
+    }));
+
+    console.log("Loaded bars (allBars.length) =", allBars.length);
+    hideLoading();
+    renderMarkers(allBars);
+    updateStats(allBars.filter(b => b.price_found));
+  } catch (err) {
+    console.error("loadBars failed:", err);
+    // still hide loading so you can interact and see console messages
+    hideLoading();
+    // optionally show a simple UI message here
+  }
 }
 
 function hideLoading(){const el=document.getElementById('loading');el.style.opacity='0';setTimeout(()=>el.style.display='none',500);}
