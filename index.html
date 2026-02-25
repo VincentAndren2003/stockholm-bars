@@ -277,14 +277,21 @@ async function loadBars(){
           getBarField(row, 'location', 'address', 'full_address', 'street_address', 'Location', 'Address') || ''
         ) || 'Stockholm';
         const barName = getBarField(row, 'bar_name', 'name', 'barName', 'Name') || 'Unknown';
-        let lat = parseCoord(getBarField(row, 'lat', 'latitude', 'Lat', 'Latitude'));
-        let lng = parseCoord(getBarField(row, 'lng', 'lng', 'longitude', 'Lng', 'Longitude'));
 
-        const inStockholm = lat != null && lng != null && lng >= 17.9 && lng <= 18.25 && lat >= 59.28 && lat <= 59.45;
-        const precise = hasEnoughPrecision(lat, 3) && hasEnoughPrecision(lng, 3);
-        if (!inStockholm || !precise) {
+        // Prefer coordinates from address (geocoding) – OpenAI gives address, not coords
+        let lat = null;
+        let lng = null;
+        const hasRealAddress = address && address !== 'Stockholm' && address.length > 3;
+        if (hasRealAddress) {
           const coords = await geocodeAddress(address);
           if (coords) { lng = coords[0]; lat = coords[1]; }
+        }
+        // Fallback to DB lat/lng only if geocoding didn’t return anything
+        if (lat == null || lng == null) {
+          lat = parseCoord(getBarField(row, 'lat', 'latitude', 'Lat', 'Latitude'));
+          lng = parseCoord(getBarField(row, 'lng', 'longitude', 'Lng', 'Longitude'));
+          const inStockholm = lat != null && lng != null && lng >= 17.9 && lng <= 18.25 && lat >= 59.28 && lat <= 59.45;
+          if (!inStockholm) { lat = null; lng = null; }
         }
 
         let opening_hours = getBarField(row, 'opening_hours', 'openingHours', 'hours', 'opening hours', 'Opening Hours');
