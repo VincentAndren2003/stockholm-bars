@@ -250,6 +250,15 @@ async function geocodeAddress(address){
   return null;
 }
 
+// Get first non-null value from row using any of the given keys (handles different DB column names)
+function getBarField(row, ...keys) {
+  for (const k of keys) {
+    const v = row?.[k];
+    if (v != null && v !== '') return v;
+  }
+  return null;
+}
+
 async function loadBars(){
   try{
     const { data: bars, error } = await supabase.from('Newbars1').select('*');
@@ -258,26 +267,19 @@ async function loadBars(){
       hideLoading();
       return;
     }
-    console.log("Supabase: bars count =", (bars && bars.length) || 0);
-    (bars || []).slice(0,5).forEach(b => console.log("sample:", b));
+    const rows = bars || [];
+    console.log("Supabase: bars count =", rows.length);
+    if (rows.length > 0) console.log("DB columns (first row):", Object.keys(rows[0]));
 
-    allBars = await Promise.all((bars || []).map(async row => {
+    allBars = await Promise.all(rows.map(async row => {
       try {
-        let opening_hours = null;
-        try{
-          if(row.opening_hours){
-            opening_hours = (typeof row.opening_hours === 'string') ? JSON.parse(row.opening_hours) : row.opening_hours;
-          }
-        }catch(e){
-          opening_hours = row.opening_hours || null;
-        }
+        const address = normalizeAddress(
+          getBarField(row, 'location', 'address', 'full_address', 'street_address', 'Location', 'Address') || ''
+        ) || 'Stockholm';
+        const barName = getBarField(row, 'bar_name', 'name', 'barName', 'Name') || 'Unknown';
+        let lat = parseCoord(getBarField(row, 'lat', 'latitude', 'Lat', 'Latitude'));
+        let lng = parseCoord(getBarField(row, 'lng', 'lng', 'longitude', 'Lng', 'Longitude'));
 
-        const address = normalizeAddress(row.location || row.address || row.full_address || row.street_address || '') || 'Stockholm';
-        const barName = row.bar_name || row.name || 'Unknown';
-        let lat = parseCoord(row.lat ?? row.latitude);
-        let lng = parseCoord(row.lng ?? row.longitude);
-
-        // Stockholm area (wider than Söder so we don't drop valid coords)
         const inStockholm = lat != null && lng != null && lng >= 17.9 && lng <= 18.25 && lat >= 59.28 && lat <= 59.45;
         const precise = hasEnoughPrecision(lat, 3) && hasEnoughPrecision(lng, 3);
         if (!inStockholm || !precise) {
@@ -285,27 +287,43 @@ async function loadBars(){
           if (coords) { lng = coords[0]; lat = coords[1]; }
         }
 
+        let opening_hours = getBarField(row, 'opening_hours', 'openingHours', 'hours', 'opening hours', 'Opening Hours');
+        if (opening_hours != null) {
+          try {
+            opening_hours = typeof opening_hours === 'string' && (opening_hours.trim().startsWith('{') || opening_hours.trim().startsWith('['))
+              ? JSON.parse(opening_hours) : opening_hours;
+          } catch (_) {
+            opening_hours = opening_hours;
+          }
+        }
+
+        const priceVal = getBarField(row, 'price', 'cheapest_beer_sek', 'Price');
+        const priceNum = priceVal != null && priceVal !== '' ? Number(priceVal) : null;
+        const danceVal = getBarField(row, 'dance_floor', 'dance_floor', 'danceFloor');
+        const dance = danceVal === true || String(danceVal).toLowerCase() === 'yes' ? 'yes' :
+          danceVal === false || String(danceVal).toLowerCase() === 'no' ? 'no' : (danceVal ? String(danceVal) : 'unknown');
+
         return {
-          id: row.id || row.slug || (barName && String(barName).toLowerCase().replace(/\s+/g,'-')) || barName,
+          id: getBarField(row, 'id', 'slug') || (barName && String(barName).toLowerCase().replace(/\s+/g,'-')) || barName,
           name: barName,
           address: address,
           lat: lat,
           lng: lng,
-          price_found: row.price != null && row.price !== '',
-          cheapest_beer_sek: row.price != null ? Number(row.price) : null,
-          cheapest_beer_name: row.cheapest_beer_name || null,
+          price_found: priceNum != null && priceNum !== '',
+          cheapest_beer_sek: priceNum,
+          cheapest_beer_name: getBarField(row, 'cheapest_beer_name', 'beer_name', 'cheapestBeerName') || null,
           opening_hours: opening_hours,
-          last_updated: row.updated_at || row.created_at || null,
-          website: row.website || null,
-          dance_floor: row.dance_floor || 'unknown',
-          dance_notes: row.dance_notes || null
+          last_updated: getBarField(row, 'updated_at', 'created_at', 'updatedAt', 'createdAt') || null,
+          website: getBarField(row, 'website', 'url', 'Website') || null,
+          dance_floor: dance,
+          dance_notes: getBarField(row, 'dance_notes', 'dance_notes', 'danceNotes') || null
         };
       } catch (err) {
-        console.warn("Bar row failed:", row?.bar_name ?? row?.name ?? row, err);
+        console.warn("Bar row failed:", row, err);
         return {
-          id: row?.id ?? row?.bar_name ?? 'unknown',
-          name: row?.bar_name || row?.name || 'Unknown',
-          address: normalizeAddress(row?.location || row?.address || '') || 'Stockholm',
+          id: getBarField(row, 'id', 'bar_name', 'name') || 'unknown',
+          name: getBarField(row, 'bar_name', 'name') || 'Unknown',
+          address: normalizeAddress(getBarField(row, 'location', 'address') || '') || 'Stockholm',
           lat: null,
           lng: null,
           price_found: false,
