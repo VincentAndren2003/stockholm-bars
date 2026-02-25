@@ -192,15 +192,29 @@ let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
 async function geocodeAddress(address){
   if(!address||address==="Address not found")return null;
-  // Prefer address-level results in Södermalm for accurate building placement
-  const query = address.includes('Stockholm') || address.includes('Södermalm') ? address : address + ', Södermalm, Stockholm';
-  const bbox = '18.02,59.30,18.10,59.34';
-  const url=`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxgl.accessToken}&country=se&bbox=${bbox}&types=address,place,poi&limit=1`;
+  // Normalize: trim, collapse spaces, ensure Södermalm/Stockholm for context
+  const raw = address.trim().replace(/\s+/g, ' ');
+  const hasArea = /Stockholm|Södermalm|Söder/i.test(raw);
+  const query = hasArea ? raw : raw + ', Södermalm, Stockholm, Sweden';
+
+  // Mapbox Geocoding API v5 – parameters for best match in Söder
+  const params = new URLSearchParams({
+    access_token: mapboxgl.accessToken,
+    country: 'se',                    // Restrict to Sweden
+    types: 'address,place,poi',       // Prefer street address, then place/poi
+    limit: '1',                       // Single best result
+    language: 'sv',                   // Swedish for local names
+    fuzzyMatch: 'true',               // Tolerate typos
+    autocomplete: 'false',            // Full query, not search-as-you-type
+    bbox: '18.02,59.30,18.10,59.34',  // Södermalm bounds [minLng,minLat,maxLng,maxLat]
+    proximity: '18.0686,59.3172'      // Bias toward Södermalm center (lng,lat)
+  });
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?${params}`;
   try{
-    const resp=await fetch(url);
-    const data=await resp.json();
-    if(data.features&&data.features.length>0) return data.features[0].center;
-  }catch(e){console.error("Geocode error for", address, e);}
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data.features && data.features.length > 0) return data.features[0].center;
+  }catch(e){ console.error("Geocode error for", address, e); }
   return null;
 }
 
