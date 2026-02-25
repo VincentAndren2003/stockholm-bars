@@ -190,30 +190,46 @@ map.addControl(new mapboxgl.NavigationControl({showCompass:false}),'bottom-right
 
 let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
-async function geocodeAddress(address){
-  if(!address||address==="Address not found")return null;
-  // Normalize: trim, collapse spaces, ensure Södermalm/Stockholm for context
-  const raw = address.trim().replace(/\s+/g, ' ');
-  const hasArea = /Stockholm|Södermalm|Söder/i.test(raw);
-  const query = hasArea ? raw : raw + ', Södermalm, Stockholm, Sweden';
+// Normalize address from DB: fix encoding, hidden chars, and format for Mapbox
+function normalizeAddress(value){
+  if(value == null || value === '') return '';
+  let s = String(value)
+    .replace(/\uFEFF/g, '')           // BOM
+    .replace(/[\r\n\t]+/g, ' ')        // newlines/tabs -> space
+    .replace(/\s+/g, ' ')              // collapse spaces
+    .trim();
+  // Keep only chars that are normal in Swedish addresses (letters, digits, comma, period, hyphen, space, åäö)
+  s = s.replace(/[^\p{L}\p{N}\s,.\-]/gu, '').replace(/\s+/g, ' ').trim();
+  return s;
+}
 
-  // Mapbox Geocoding API v5 – parameters for best match in Söder
+async function geocodeAddress(address){
+  const raw = normalizeAddress(address);
+  if(!raw || raw === "Address not found") return null;
+
+  // Mapbox expects "Street number, Locality, Country". Always add Stockholm/Söder so it's unambiguous.
+  const hasLocality = /Stockholm|Södermalm|Söder|^\d{3}\s?\d{2}/i.test(raw);
+  const query = hasLocality ? raw : raw + ', Södermalm, Stockholm, Sweden';
+
   const params = new URLSearchParams({
     access_token: mapboxgl.accessToken,
-    country: 'se',                    // Restrict to Sweden
-    types: 'address,place,poi',       // Prefer street address, then place/poi
-    limit: '1',                       // Single best result
-    language: 'sv',                   // Swedish for local names
-    fuzzyMatch: 'true',               // Tolerate typos
-    autocomplete: 'false',            // Full query, not search-as-you-type
-    bbox: '18.02,59.30,18.10,59.34',  // Södermalm bounds [minLng,minLat,maxLng,maxLat]
-    proximity: '18.0686,59.3172'      // Bias toward Södermalm center (lng,lat)
+    country: 'se',
+    types: 'address,place,poi',
+    limit: '1',
+    language: 'sv',
+    fuzzyMatch: 'true',
+    autocomplete: 'false',
+    bbox: '18.02,59.30,18.10,59.34',
+    proximity: '18.0686,59.3172'
   });
   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?${params}`;
   try{
     const resp = await fetch(url);
     const data = await resp.json();
-    if (data.features && data.features.length > 0) return data.features[0].center;
+    if (data.features && data.features.length > 0) {
+      const f = data.features[0];
+      return f.center;
+    }
   }catch(e){ console.error("Geocode error for", address, e); }
   return null;
 }
@@ -239,18 +255,15 @@ async function loadBars(){
         opening_hours = row.opening_hours || null;
       }
 
-      const address = row.location || row.address || 'Stockholm';
-      // Always geocode from address for correct building placement on Söder
-      const coords = await geocodeAddress(address);
-      let lat = null;
-      let lng = null;
-      if(coords){
-        lng = coords[0];
-        lat = coords[1];
-      }
-      if(lat === null || lng === null){
-        lat = row.lat != null ? Number(row.lat) : null;
-        lng = row.lng != null ? Number(row.lng) : null;
+      const address = normalizeAddress(row.location || row.address || '') || 'Stockholm';
+      let lat = row.lat != null ? Number(row.lat) : null;
+      let lng = row.lng != null ? Number(row.lng) : null;
+
+      // Söder bbox: if DB already has coords inside, trust them (you can fix positions in Supabase)
+      const inSoder = lat != null && lng != null && lng >= 18.02 && lng <= 18.10 && lat >= 59.30 && lat <= 59.34;
+      if (!inSoder) {
+        const coords = await geocodeAddress(address);
+        if (coords) { lng = coords[0]; lat = coords[1]; }
       }
 
       return {
