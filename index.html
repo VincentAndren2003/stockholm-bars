@@ -135,6 +135,14 @@
       <span>🕐</span>
       <span id="sb-updated">Last updated —</span>
     </div>
+    <div class="meta-row">
+      <span>💃</span>
+      <span id="sb-dance">Dance floor —</span>
+    </div>
+    <div class="meta-row">
+      <span>⏰</span>
+      <span id="sb-hours">Opening hours —</span>
+    </div>
   </div>
 
   <div class="sidebar-footer">
@@ -212,20 +220,19 @@ async function loadBars(){
         opening_hours = row.opening_hours || null;
       }
 
-      const lat = row.lat != null ? Number(row.lat) : null;
-      const lng = row.lng != null ? Number(row.lng) : null;
+      // Prefer fresh geocoding from address for accurate placement
+      const address = row.location || row.address || 'Stockholm';
+      let coords = await geocodeAddress(address);
 
-      let coords = null;
-      if((lat === null || lng === null) && row.location){
-        coords = await geocodeAddress(row.location);
-      }
+      const lat = coords ? coords[1] : (row.lat != null ? Number(row.lat) : null);
+      const lng = coords ? coords[0] : (row.lng != null ? Number(row.lng) : null);
 
       return {
         id: row.id || row.slug || (row.bar_name && row.bar_name.toLowerCase().replace(/\s+/g,'-')) || row.bar_name,
         name: row.bar_name || row.name || 'Unknown',
-        address: row.location || row.address || 'Stockholm',
-        lat: lat !== null ? lat : (coords ? coords[1] : null),
-        lng: lng !== null ? lng : (coords ? coords[0] : null),
+        address: address,
+        lat: lat,
+        lng: lng,
         price_found: row.price != null && row.price !== '',
         cheapest_beer_sek: row.price != null ? Number(row.price) : null,
         cheapest_beer_name: row.cheapest_beer_name || null,
@@ -285,6 +292,39 @@ window.openSidebar=function(bar){
   if(bar.website){wsEl.href=bar.website; wsEl.style.display='';}else wsEl.style.display='none';
   const updated=bar.last_updated?new Date(bar.last_updated).toLocaleDateString('sv-SE'):'—';
   document.getElementById('sb-updated').textContent='Updated '+updated;
+  // Dance floor info
+  const danceEl=document.getElementById('sb-dance');
+  if(bar.dance_floor && bar.dance_floor !== 'unknown'){
+    let txt = bar.dance_floor === 'yes' ? 'Dance floor: Yes' :
+              bar.dance_floor === 'no' ? 'Dance floor: No' :
+              'Dance floor: ' + String(bar.dance_floor);
+    if(bar.dance_notes){
+      txt += ' — ' + bar.dance_notes;
+    }
+    danceEl.textContent = txt;
+  } else {
+    danceEl.textContent = 'Dance floor: Unknown';
+  }
+  // Opening hours summary (very simple)
+  const hoursEl=document.getElementById('sb-hours');
+  const oh = bar.opening_hours;
+  if(!oh){
+    hoursEl.textContent = 'Opening hours: —';
+  } else if (typeof oh === 'string'){
+    hoursEl.textContent = 'Opening hours: ' + oh;
+  } else {
+    try{
+      const entries = Object.entries(oh).filter(([_,v]) => v);
+      if(entries.length === 0){
+        hoursEl.textContent = 'Opening hours: —';
+      }else{
+        const firstFew = entries.slice(0,3).map(([day,v]) => `${day}: ${v}`).join(' · ');
+        hoursEl.textContent = 'Opening hours: ' + firstFew + (entries.length>3 ? ' …' : '');
+      }
+    }catch(e){
+      hoursEl.textContent = 'Opening hours: —';
+    }
+  }
   document.getElementById('sidebar').classList.add('open');
 };
 
