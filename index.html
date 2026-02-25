@@ -256,14 +256,13 @@ function renderMarkers(bars){
     const el=document.createElement('div');
     el.style.cssText=`width:36px;height:36px;background:${bar.price_found?'#f5c542':'#3a3530'};border:2px solid ${bar.price_found?'#e08c00':'#5a5040'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);transition:transform 0.15s, box-shadow 0.15s;`;
     el.textContent='🍺';
-    el.addEventListener('mouseenter',()=>{el.style.transform='scale(1.25)';el.style.zIndex='10';});
-    el.addEventListener('mouseleave',()=>{el.style.transform='scale(1)';el.style.zIndex='1';});
     const popupContent=`<div class="popup-name">${bar.name}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button class="popup-open" onclick="window._openSidebar('${bar.id}')">See details →</button>`;
-    const popup=new mapboxgl.Popup({offset:20,closeButton:false,closeOnClick:false}).setHTML(popupContent);
-    el.addEventListener('mouseenter',()=>popup.addTo(map));
-    el.addEventListener('mouseleave',()=>popup.remove());
+    const popup=new mapboxgl.Popup({offset:20}).setLngLat([bar.lng,bar.lat]).setHTML(popupContent);
     el.addEventListener('click',()=>openSidebar(bar));
-    const marker=new mapboxgl.Marker({element:el}).setLngLat([bar.lng,bar.lat]).addTo(map);
+    const marker=new mapboxgl.Marker({element:el})
+      .setLngLat([bar.lng,bar.lat])
+      .setPopup(popup)
+      .addTo(map);
     markers.push(marker);
   });
 }
