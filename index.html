@@ -305,19 +305,45 @@ async function loadBarsFromFile(){
 }
 
 function spreadDuplicateCoords(bars) {
-  const key = (b) => b.lat != null && b.lng != null ? `${b.lat.toFixed(5)}_${b.lng.toFixed(5)}` : null;
+  // Group by rounded coords (~100m) so nearby bars are spread in a visible circle
+  const key = (b) => b.lat != null && b.lng != null ? `${b.lat.toFixed(4)}_${b.lng.toFixed(4)}` : null;
   const byKey = new Map();
   bars.forEach(b => {
     const k = key(b);
     if (k) { if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(b); }
   });
+  const radius = 0.00035; // ~40m so clusters are clearly visible
   byKey.forEach((group) => {
     if (group.length <= 1) return;
-    const step = 0.00008;
     group.forEach((b, i) => {
-      b.lat = b.lat + (i % 3) * step * 0.6;
-      b.lng = b.lng + Math.floor(i / 3) * step;
+      const angle = (i / group.length) * 2 * Math.PI;
+      b.lat = b.lat + radius * Math.cos(angle);
+      b.lng = b.lng + radius * Math.sin(angle);
     });
+  });
+  return bars;
+}
+
+async function geocodeBarsFromAddresses(bars) {
+  const cache = new Map();
+  const hasGoodAddress = (b) => b.address && b.address.length > 5 && !/^null$/i.test(b.address) && b.address !== 'Stockholm';
+  const toGeocode = bars.filter(hasGoodAddress);
+  const uniqueAddrs = [...new Set(toGeocode.map(b => b.address.trim()))];
+  const loadingEl = document.getElementById('loading');
+  const msgEl = loadingEl ? loadingEl.querySelector('p') : null;
+  for (let i = 0; i < uniqueAddrs.length; i++) {
+    const addr = uniqueAddrs[i];
+    if (msgEl) msgEl.textContent = `Geocoding addresses... ${i + 1}/${uniqueAddrs.length}`;
+    if (!cache.has(addr)) {
+      const coords = await geocodeAddress(addr, null);
+      if (coords) cache.set(addr, coords);
+      await new Promise(r => setTimeout(r, 120));
+    }
+  }
+  bars.forEach(b => {
+    if (!hasGoodAddress(b)) return;
+    const c = cache.get(b.address.trim());
+    if (c) { b.lng = c[0]; b.lat = c[1]; }
   });
   return bars;
 }
@@ -331,6 +357,7 @@ async function loadBars(){
         const rows = Array.isArray(raw) ? raw : (raw.bars || raw.data || []);
         if (rows.length > 0) {
           allBars = rows.map(row => normalizeBarFromRow(row));
+          allBars = await geocodeBarsFromAddresses(allBars);
           allBars = spreadDuplicateCoords(allBars);
           const withCoords = allBars.filter(b => b.lat != null && b.lng != null);
           console.log("Bars from embedded data:", allBars.length, "total,", withCoords.length, "with coordinates");
@@ -344,7 +371,8 @@ async function loadBars(){
 
     const fromFile = await loadBarsFromFile();
     if (fromFile && fromFile.length > 0) {
-      allBars = spreadDuplicateCoords(fromFile);
+      allBars = await geocodeBarsFromAddresses(fromFile);
+      allBars = spreadDuplicateCoords(allBars);
       const withCoords = allBars.filter(b => b.lat != null && b.lng != null);
       console.log("Bars from file:", allBars.length, "total,", withCoords.length, "with coordinates");
       hideLoading();
