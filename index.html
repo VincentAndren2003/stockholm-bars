@@ -188,7 +188,10 @@ let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
 async function geocodeAddress(address){
   if(!address||address==="Address not found")return null;
-  const url=`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`;
+  // Restrict geocoding to Stockholm / Södermalm area to avoid random matches
+  // bbox: [minLng,minLat,maxLng,maxLat] roughly around Södermalm
+  const bbox = '18.02,59.30,18.10,59.34';
+  const url=`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}&country=se&bbox=${bbox}&limit=1`;
   try{
     console.log("Geocoding:", address);
     const resp=await fetch(url);
@@ -220,12 +223,18 @@ async function loadBars(){
         opening_hours = row.opening_hours || null;
       }
 
-      // Prefer fresh geocoding from address for accurate placement
       const address = row.location || row.address || 'Stockholm';
-      let coords = await geocodeAddress(address);
+      // Prefer stored coordinates if they exist, and only geocode when missing
+      let lat = row.lat != null ? Number(row.lat) : null;
+      let lng = row.lng != null ? Number(row.lng) : null;
 
-      const lat = coords ? coords[1] : (row.lat != null ? Number(row.lat) : null);
-      const lng = coords ? coords[0] : (row.lng != null ? Number(row.lng) : null);
+      if((lat === null || lng === null) && address){
+        const coords = await geocodeAddress(address);
+        if(coords){
+          lng = coords[0];
+          lat = coords[1];
+        }
+      }
 
       return {
         id: row.id || row.slug || (row.bar_name && row.bar_name.toLowerCase().replace(/\s+/g,'-')) || row.bar_name,
