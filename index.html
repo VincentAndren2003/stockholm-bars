@@ -273,11 +273,19 @@ function renderMarkers(bars){
     el.style.cssText=`width:36px;height:36px;background:${bar.price_found?'#f5c542':'#3a3530'};border:2px solid ${bar.price_found?'#e08c00':'#5a5040'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);transition:transform 0.15s, box-shadow 0.15s;`;
     el.textContent='🍺';
     const popupContent=`<div class="popup-name">${bar.name}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button class="popup-open" onclick="window._openSidebar('${bar.id}')">See details →</button>`;
-    const popup=new mapboxgl.Popup({offset:20}).setLngLat([bar.lng,bar.lat]).setHTML(popupContent);
+    const popup=new mapboxgl.Popup({offset:20, closeButton:false})
+      .setLngLat([bar.lng,bar.lat])
+      .setHTML(popupContent);
+
+    // Show brief info on hover
+    el.addEventListener('mouseenter',()=>popup.addTo(map));
+    el.addEventListener('mouseleave',()=>popup.remove());
+
+    // Click opens the detailed sidebar
     el.addEventListener('click',()=>openSidebar(bar));
+
     const marker=new mapboxgl.Marker({element:el})
       .setLngLat([bar.lng,bar.lat])
-      .setPopup(popup)
       .addTo(map);
     markers.push(marker);
   });
@@ -293,6 +301,14 @@ function updateStats(barsWithPrice){
 
 window.openSidebar=function(bar){
   activeSidebarBar=bar;
+  // Centre map on the selected bar for clarity
+  if(bar.lng != null && bar.lat != null){
+    map.flyTo({
+      center:[bar.lng, bar.lat],
+      zoom:15,
+      essential:true
+    });
+  }
   document.getElementById('sb-name').textContent=bar.name;
   document.getElementById('sb-address').textContent=bar.address||'Stockholm';
   document.getElementById('sb-price').textContent=bar.price_found?bar.cheapest_beer_sek+' kr':'Unknown';
