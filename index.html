@@ -72,6 +72,10 @@
     .btn-submit{background:var(--gold);color:var(--dark);font-weight:600;}
     .btn-submit:hover{background:#ffd666;}
     .marker-unknown{opacity:0.4;}
+    /* Pin: icon on top, line points down to building */
+    .marker-pin{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
+    .marker-pin .marker-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,0.5);flex-shrink:0;}
+    .marker-pin .marker-line{width:2px;height:18px;background:var(--gold);opacity:0.9;}
   </style>
 </head>
 <body>
@@ -188,16 +192,14 @@ let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
 async function geocodeAddress(address){
   if(!address||address==="Address not found")return null;
-  // Restrict geocoding to Stockholm / Södermalm area to avoid random matches
-  // bbox: [minLng,minLat,maxLng,maxLat] roughly around Södermalm
+  // Prefer address-level results in Södermalm for accurate building placement
+  const query = address.includes('Stockholm') || address.includes('Södermalm') ? address : address + ', Södermalm, Stockholm';
   const bbox = '18.02,59.30,18.10,59.34';
-  const url=`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}&country=se&bbox=${bbox}&limit=1`;
+  const url=`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxgl.accessToken}&country=se&bbox=${bbox}&types=address,place,poi&limit=1`;
   try{
-    console.log("Geocoding:", address);
     const resp=await fetch(url);
     const data=await resp.json();
     if(data.features&&data.features.length>0) return data.features[0].center;
-    console.warn("Geocode returned no features for:", address, data);
   }catch(e){console.error("Geocode error for", address, e);}
   return null;
 }
@@ -224,16 +226,17 @@ async function loadBars(){
       }
 
       const address = row.location || row.address || 'Stockholm';
-      // Prefer stored coordinates if they exist, and only geocode when missing
-      let lat = row.lat != null ? Number(row.lat) : null;
-      let lng = row.lng != null ? Number(row.lng) : null;
-
-      if((lat === null || lng === null) && address){
-        const coords = await geocodeAddress(address);
-        if(coords){
-          lng = coords[0];
-          lat = coords[1];
-        }
+      // Always geocode from address for correct building placement on Söder
+      const coords = await geocodeAddress(address);
+      let lat = null;
+      let lng = null;
+      if(coords){
+        lng = coords[0];
+        lat = coords[1];
+      }
+      if(lat === null || lng === null){
+        lat = row.lat != null ? Number(row.lat) : null;
+        lng = row.lng != null ? Number(row.lng) : null;
       }
 
       return {
@@ -270,21 +273,21 @@ function renderMarkers(bars){
   bars.forEach(bar=>{
     if(!bar.lat||!bar.lng)return;
     const el=document.createElement('div');
-    el.style.cssText=`width:36px;height:36px;background:${bar.price_found?'#f5c542':'#3a3530'};border:2px solid ${bar.price_found?'#e08c00':'#5a5040'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);transition:transform 0.15s, box-shadow 0.15s;`;
-    el.textContent='🍺';
+    el.className='marker-pin';
+    const iconBg = bar.price_found ? '#f5c542' : '#3a3530';
+    const iconBorder = bar.price_found ? '#e08c00' : '#5a5040';
+    el.innerHTML=`<div class="marker-icon" style="background:${iconBg};border:2px solid ${iconBorder}">🍺</div><div class="marker-line"></div>`;
     const popupContent=`<div class="popup-name">${bar.name}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button class="popup-open" onclick="window._openSidebar('${bar.id}')">See details →</button>`;
     const popup=new mapboxgl.Popup({offset:20, closeButton:false})
       .setLngLat([bar.lng,bar.lat])
       .setHTML(popupContent);
 
-    // Show brief info on hover
     el.addEventListener('mouseenter',()=>popup.addTo(map));
     el.addEventListener('mouseleave',()=>popup.remove());
-
-    // Click opens the detailed sidebar
     el.addEventListener('click',()=>openSidebar(bar));
 
-    const marker=new mapboxgl.Marker({element:el})
+    // Anchor at bottom so the tip of the line sits on the building
+    const marker=new mapboxgl.Marker({element:el, anchor:'bottom'})
       .setLngLat([bar.lng,bar.lat])
       .addTo(map);
     markers.push(marker);
