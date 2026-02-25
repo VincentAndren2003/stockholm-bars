@@ -190,13 +190,20 @@ map.addControl(new mapboxgl.NavigationControl({showCompass:false}),'bottom-right
 
 let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
-// Require at least 4 decimal places (~10m accuracy); low precision = wrong place on map
+// Parse lat/lng from DB (number, string, or comma decimal)
+function parseCoord(value){
+  if (value == null || value === '') return null;
+  const n = typeof value === 'number' ? value : Number(String(value).replace(',', '.').trim());
+  return isNaN(n) ? null : n;
+}
+
+// Require at least 3 decimal places for "precise enough" DB coords
 function hasEnoughPrecision(num, minDecimals){
   if (num == null || typeof num !== 'number' || isNaN(num)) return false;
   const s = String(Number(num));
   const i = s.indexOf('.');
   const decimals = i === -1 ? 0 : s.length - i - 1;
-  return decimals >= (minDecimals || 4);
+  return decimals >= (minDecimals || 3);
 }
 
 // Normalize address from DB: fix encoding, hidden chars, and format for Mapbox
@@ -255,46 +262,70 @@ async function loadBars(){
     (bars || []).slice(0,5).forEach(b => console.log("sample:", b));
 
     allBars = await Promise.all((bars || []).map(async row => {
-      let opening_hours = null;
-      try{
-        if(row.opening_hours){
-          opening_hours = (typeof row.opening_hours === 'string') ? JSON.parse(row.opening_hours) : row.opening_hours;
+      try {
+        let opening_hours = null;
+        try{
+          if(row.opening_hours){
+            opening_hours = (typeof row.opening_hours === 'string') ? JSON.parse(row.opening_hours) : row.opening_hours;
+          }
+        }catch(e){
+          opening_hours = row.opening_hours || null;
         }
-      }catch(e){
-        opening_hours = row.opening_hours || null;
+
+        const address = normalizeAddress(row.location || row.address || row.full_address || row.street_address || '') || 'Stockholm';
+        const barName = row.bar_name || row.name || 'Unknown';
+        let lat = parseCoord(row.lat ?? row.latitude);
+        let lng = parseCoord(row.lng ?? row.longitude);
+
+        // Stockholm area (wider than Söder so we don't drop valid coords)
+        const inStockholm = lat != null && lng != null && lng >= 17.9 && lng <= 18.25 && lat >= 59.28 && lat <= 59.45;
+        const precise = hasEnoughPrecision(lat, 3) && hasEnoughPrecision(lng, 3);
+        if (!inStockholm || !precise) {
+          const coords = await geocodeAddress(address);
+          if (coords) { lng = coords[0]; lat = coords[1]; }
+        }
+
+        return {
+          id: row.id || row.slug || (barName && String(barName).toLowerCase().replace(/\s+/g,'-')) || barName,
+          name: barName,
+          address: address,
+          lat: lat,
+          lng: lng,
+          price_found: row.price != null && row.price !== '',
+          cheapest_beer_sek: row.price != null ? Number(row.price) : null,
+          cheapest_beer_name: row.cheapest_beer_name || null,
+          opening_hours: opening_hours,
+          last_updated: row.updated_at || row.created_at || null,
+          website: row.website || null,
+          dance_floor: row.dance_floor || 'unknown',
+          dance_notes: row.dance_notes || null
+        };
+      } catch (err) {
+        console.warn("Bar row failed:", row?.bar_name ?? row?.name ?? row, err);
+        return {
+          id: row?.id ?? row?.bar_name ?? 'unknown',
+          name: row?.bar_name || row?.name || 'Unknown',
+          address: normalizeAddress(row?.location || row?.address || '') || 'Stockholm',
+          lat: null,
+          lng: null,
+          price_found: false,
+          cheapest_beer_sek: null,
+          cheapest_beer_name: null,
+          opening_hours: null,
+          last_updated: null,
+          website: null,
+          dance_floor: 'unknown',
+          dance_notes: null
+        };
       }
-
-      const address = normalizeAddress(row.location || row.address || '') || 'Stockholm';
-      let lat = row.lat != null ? Number(row.lat) : null;
-      let lng = row.lng != null ? Number(row.lng) : null;
-
-      // Only use DB coords if they're inside Söder AND have full precision (4+ decimals).
-      // Rounded coords (e.g. 59.32, 18.06) put markers in the wrong place.
-      const inSoder = lat != null && lng != null && lng >= 18.02 && lng <= 18.10 && lat >= 59.30 && lat <= 59.34;
-      const precise = hasEnoughPrecision(lat, 4) && hasEnoughPrecision(lng, 4);
-      if (!inSoder || !precise) {
-        const coords = await geocodeAddress(address);
-        if (coords) { lng = coords[0]; lat = coords[1]; }
-      }
-
-      return {
-        id: row.id || row.slug || (row.bar_name && row.bar_name.toLowerCase().replace(/\s+/g,'-')) || row.bar_name,
-        name: row.bar_name || row.name || 'Unknown',
-        address: address,
-        lat: lat,
-        lng: lng,
-        price_found: row.price != null && row.price !== '',
-        cheapest_beer_sek: row.price != null ? Number(row.price) : null,
-        cheapest_beer_name: row.cheapest_beer_name || null,
-        opening_hours: opening_hours,
-        last_updated: row.updated_at || row.created_at || null,
-        website: row.website || null,
-        dance_floor: row.dance_floor || 'unknown',
-        dance_notes: row.dance_notes || null
-      };
     }));
 
-    console.log("Loaded bars (allBars.length) =", allBars.length);
+    const withCoords = allBars.filter(b => b.lat != null && b.lng != null);
+    const withoutCoords = allBars.filter(b => b.lat == null || b.lng == null);
+    console.log("Loaded bars:", allBars.length, "total,", withCoords.length, "on map,", withoutCoords.length, "missing coordinates");
+    if (withoutCoords.length > 0) {
+      console.warn("Bars without coordinates (add address/lat/lng in Supabase):", withoutCoords.map(b => ({ name: b.name, address: b.address })));
+    }
     hideLoading();
     renderMarkers(allBars);
     updateStats(allBars.filter(b => b.price_found));
