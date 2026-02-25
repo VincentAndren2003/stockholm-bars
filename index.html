@@ -156,22 +156,17 @@
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+// load local config (file must exist locally but be ignored by git)
+import { SUPABASE_URL, SUPABASE_ANON_KEY, MAPBOX_TOKEN } from './env-config.js';
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
-const firebaseConfig = {
-  apiKey: "AIzaSyChtKK5KyRO4lOQCLTVxJHRMNES3b-FREI",
-  authDomain: "beersite-ff87b.firebaseapp.com",
-  projectId: "beersite-ff87b",
-  storageBucket: "beersite-ff87b.firebasestorage.app",
-  messagingSenderId: "479339282164",
-  appId: "1:479339282164:web:f74cfbadbeb8ba490768a1"
-};
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('Missing Supabase config: create env-config.js in project root (ignored by git).');
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-mapboxgl.accessToken = 'pk.eyJ1IjoidmluY2VudGFuZHJlbjAzIiwiYSI6ImNtbHpmajltNzA0cjQ0a3F3YzR3eGZ0Z2kifQ.qMvlisQnvy2JuJwwIoDBxA';
 const map = new mapboxgl.Map({container:'map',style:'mapbox://styles/mapbox/dark-v11',center:[18.0686,59.3293],zoom:13,pitch:30});
 map.addControl(new mapboxgl.NavigationControl({showCompass:false}),'bottom-right');
 
@@ -192,29 +187,47 @@ async function geocodeAddress(address){
 
 async function loadBars(){
   try{
-    const snapshot = await getDocs(collection(db,"BarDetails"));
-    console.log("Firestore: BarDetails docs count =", snapshot.size);
-    snapshot.docs.slice(0,5).forEach(d => console.log("doc sample:", d.id, d.data())); // show up to 5 samples
+    const { data: bars, error } = await supabase.from('bars').select('*');
+    if(error){
+      console.error("Supabase error fetching bars:", error);
+      hideLoading();
+      return;
+    }
+    console.log("Supabase: bars count =", (bars && bars.length) || 0);
+    (bars || []).slice(0,5).forEach(b => console.log("sample:", b));
 
-    allBars = await Promise.all(snapshot.docs.map(async doc => {
-      const data = doc.data();
-      let coords = null;
-      if (data.location && data.location !== "Address not found") {
-        coords = await geocodeAddress(data.location);
-        if (!coords) console.warn("Failed to geocode:", data.bar_name, data.location);
+    allBars = await Promise.all((bars || []).map(async row => {
+      let opening_hours = null;
+      try{
+        if(row.opening_hours){
+          opening_hours = (typeof row.opening_hours === 'string') ? JSON.parse(row.opening_hours) : row.opening_hours;
+        }
+      }catch(e){
+        opening_hours = row.opening_hours || null;
       }
+
+      const lat = row.lat != null ? Number(row.lat) : null;
+      const lng = row.lng != null ? Number(row.lng) : null;
+
+      let coords = null;
+      if((lat === null || lng === null) && row.location){
+        coords = await geocodeAddress(row.location);
+      }
+
       return {
-        id: doc.id,
-        name: data.bar_name || doc.id,
-        address: data.location || "Stockholm",
-        lat: coords ? coords[1] : null,
-        lng: coords ? coords[0] : null,
-        price_found: data.price != null,
-        cheapest_beer_sek: data.price,
-        cheapest_beer_name: data.cheapest_beer_name || "Cheapest beer",
-        opening_hours: data.opening_hours || null,
-        last_updated: data._updateTime || null,
-        website: data.website || null
+        id: row.id || row.slug || (row.bar_name && row.bar_name.toLowerCase().replace(/\s+/g,'-')) || row.bar_name,
+        name: row.bar_name || row.name || 'Unknown',
+        address: row.location || row.address || 'Stockholm',
+        lat: lat !== null ? lat : (coords ? coords[1] : null),
+        lng: lng !== null ? lng : (coords ? coords[0] : null),
+        price_found: row.price != null && row.price !== '',
+        cheapest_beer_sek: row.price != null ? Number(row.price) : null,
+        cheapest_beer_name: row.cheapest_beer_name || null,
+        opening_hours: opening_hours,
+        last_updated: row.updated_at || row.created_at || null,
+        website: row.website || null,
+        dance_floor: row.dance_floor || 'unknown',
+        dance_notes: row.dance_notes || null
       };
     }));
 
@@ -224,9 +237,7 @@ async function loadBars(){
     updateStats(allBars.filter(b => b.price_found));
   } catch (err) {
     console.error("loadBars failed:", err);
-    // still hide loading so you can interact and see console messages
     hideLoading();
-    // optionally show a simple UI message here
   }
 }
 
@@ -293,12 +304,27 @@ window.submitSuggestion=async function(){
   const price=parseInt(document.getElementById('modal-price').value);
   const beer=document.getElementById('modal-beer').value;
   if(!price||price<20||price>500){alert('Please enter a valid price between 20–500 kr');return;}
-  if(!activeSidebarBar)return;
-  await addDoc(collection(db,"suggestions"),{bar_id:activeSidebarBar.id,bar_name:activeSidebarBar.name,suggested_price:price,beer_name:beer||null,submitted_at:serverTimestamp()});
-  closeModal();alert('Thanks! Your suggestion has been submitted for review 🍺');
-}
+  if(!activeSidebarBar){alert('No bar selected');return;}
 
-map.on('load',loadBars);
+  try{
+    const payload = {
+      bar_id: activeSidebarBar.id,
+      bar_name: activeSidebarBar.name,
+      suggested_price: price,
+      beer_name: beer || null,
+      submitted_at: new Date().toISOString()
+    };
+    const { data, error } = await supabase.from('suggestions').insert([payload]);
+    if(error){ throw error; }
+    closeModal(); alert('Thanks! Your suggestion has been submitted for review 🍺');
+  }catch(err){
+    console.error("Suggestion submit error:", err);
+    alert('Failed to submit suggestion. See console for details.');
+  }
+};
+
+// ensure we initialize after defining functions
+map.on('load', loadBars);
 </script>
 
 </body>
