@@ -245,7 +245,7 @@ async function geocodeAddress(address){
 
 async function loadBars(){
   try{
-    const { data: bars, error } = await supabase.from('bars').select('*');
+    const { data: bars, error } = await supabase.from('Newbars1').select('*');
     if(error){
       console.error("Supabase error fetching bars:", error);
       hideLoading();
