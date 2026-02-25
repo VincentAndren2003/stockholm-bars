@@ -190,6 +190,15 @@ map.addControl(new mapboxgl.NavigationControl({showCompass:false}),'bottom-right
 
 let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
+// Require at least 4 decimal places (~10m accuracy); low precision = wrong place on map
+function hasEnoughPrecision(num, minDecimals){
+  if (num == null || typeof num !== 'number' || isNaN(num)) return false;
+  const s = String(Number(num));
+  const i = s.indexOf('.');
+  const decimals = i === -1 ? 0 : s.length - i - 1;
+  return decimals >= (minDecimals || 4);
+}
+
 // Normalize address from DB: fix encoding, hidden chars, and format for Mapbox
 function normalizeAddress(value){
   if(value == null || value === '') return '';
@@ -259,9 +268,11 @@ async function loadBars(){
       let lat = row.lat != null ? Number(row.lat) : null;
       let lng = row.lng != null ? Number(row.lng) : null;
 
-      // Söder bbox: if DB already has coords inside, trust them (you can fix positions in Supabase)
+      // Only use DB coords if they're inside Söder AND have full precision (4+ decimals).
+      // Rounded coords (e.g. 59.32, 18.06) put markers in the wrong place.
       const inSoder = lat != null && lng != null && lng >= 18.02 && lng <= 18.10 && lat >= 59.30 && lat <= 59.34;
-      if (!inSoder) {
+      const precise = hasEnoughPrecision(lat, 4) && hasEnoughPrecision(lng, 4);
+      if (!inSoder || !precise) {
         const coords = await geocodeAddress(address);
         if (coords) { lng = coords[0]; lat = coords[1]; }
       }
