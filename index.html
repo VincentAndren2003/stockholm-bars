@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stockholm Bar Map — Billigaste Ölen</title>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css" rel="stylesheet"/>
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js"></script>
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     /* ────────────────────────────────────────────── */
@@ -50,8 +50,9 @@
     #loading p{font-size:13px;color:var(--muted);}
     .spinner{width:32px;height:32px;border:2px solid rgba(245,197,66,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .mapboxgl-popup-content{background:var(--card) !important;border:1px solid rgba(245,197,66,0.25) !important;border-radius:10px !important;padding:12px 14px !important;color:var(--text) !important;box-shadow:0 8px 32px rgba(0,0,0,0.6) !important;}
-    .mapboxgl-popup-tip{display:none !important;}
+    .leaflet-popup-content-wrapper{background:var(--card);border:1px solid rgba(245,197,66,0.25);border-radius:10px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.6);}
+    .leaflet-popup-tip{background:var(--card);}
+    .leaflet-container a.leaflet-popup-close-button{color:var(--muted);}
     .popup-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;}
     .popup-price{font-size:22px;font-weight:500;color:var(--gold);}
     .popup-price span{font-size:12px;color:#7a7060;font-weight:300;}
@@ -170,9 +171,7 @@
 
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-// load local config (file must exist locally but be ignored by git)
 import { SUPABASE_URL, SUPABASE_ANON_KEY, MAPBOX_TOKEN } from './env-config.js';
-mapboxgl.accessToken = MAPBOX_TOKEN;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('Missing Supabase config: create env-config.js in project root (ignored by git).');
@@ -180,14 +179,14 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const map = new mapboxgl.Map({
-  container:'map',
-  style:'mapbox://styles/mapbox/dark-v11',
-  center:[18.0686,59.3293],
-  zoom:13,
-  pitch:30
-});
-map.addControl(new mapboxgl.NavigationControl({showCompass:false}),'bottom-right');
+// Leaflet map – Stockholm. Uses [lat, lng] (Leaflet order). Tiles: CartoDB dark (no API key).
+const map = L.map('map').setView([59.3293, 18.0686], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 20
+}).addTo(map);
+map.zoomControl.setPosition('bottomright');
 
 let allBars=[]; let markers=[]; let activeSidebarBar=null;
 
@@ -231,7 +230,7 @@ async function geocodeAddress(address, debugLabel){
   const typesToTry = ['address', 'address,place', 'address,place,poi'];
   for (const types of typesToTry) {
     const params = new URLSearchParams({
-      access_token: mapboxgl.accessToken,
+      access_token: MAPBOX_TOKEN || '',
       country: 'se',
       types: types,
       limit: '1',
@@ -245,9 +244,13 @@ async function geocodeAddress(address, debugLabel){
     try {
       const resp = await fetch(url);
       const data = await resp.json();
+      if (!resp.ok || data.message) {
+        if (debugLabel || (data.message && !data.message.includes('rate'))) console.warn("Mapbox geocode error:", data.message || resp.status, "for", query);
+        return null;
+      }
       if (data.features && data.features.length > 0) {
         const f = data.features[0];
-        const center = f.center;
+        const center = f.center; // Mapbox returns [longitude, latitude] – do not swap
         if (debugLabel) console.log("Geocode:", debugLabel, "|", query, "->", center, "| place_name:", f.place_name);
         return center;
       }
@@ -305,14 +308,14 @@ async function loadBarsFromFile(){
 }
 
 function spreadDuplicateCoords(bars) {
-  // Group by rounded coords (~100m) so nearby bars are spread in a visible circle
-  const key = (b) => b.lat != null && b.lng != null ? `${b.lat.toFixed(4)}_${b.lng.toFixed(4)}` : null;
+  // Only spread bars that share the exact same point (so multiple pins are clickable)
+  const key = (b) => b.lat != null && b.lng != null ? `${b.lat.toFixed(5)}_${b.lng.toFixed(5)}` : null;
   const byKey = new Map();
   bars.forEach(b => {
     const k = key(b);
     if (k) { if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(b); }
   });
-  const radius = 0.00035; // ~40m so clusters are clearly visible
+  const radius = 0.00012; // ~12m nudge so overlapping pins don't hide each other
   byKey.forEach((group) => {
     if (group.length <= 1) return;
     group.forEach((b, i) => {
@@ -324,27 +327,35 @@ function spreadDuplicateCoords(bars) {
   return bars;
 }
 
+function addressCacheKey(addr) {
+  if (!addr || typeof addr !== 'string') return '';
+  return addr.trim().replace(/\s+/g, ' ');
+}
+
 async function geocodeBarsFromAddresses(bars) {
   const cache = new Map();
   const hasGoodAddress = (b) => b.address && b.address.length > 5 && !/^null$/i.test(b.address) && b.address !== 'Stockholm';
   const toGeocode = bars.filter(hasGoodAddress);
-  const uniqueAddrs = [...new Set(toGeocode.map(b => b.address.trim()))];
+  const uniqueAddrs = [...new Set(toGeocode.map(b => addressCacheKey(b.address)))].filter(Boolean);
   const loadingEl = document.getElementById('loading');
   const msgEl = loadingEl ? loadingEl.querySelector('p') : null;
+  let ok = 0;
   for (let i = 0; i < uniqueAddrs.length; i++) {
     const addr = uniqueAddrs[i];
     if (msgEl) msgEl.textContent = `Geocoding addresses... ${i + 1}/${uniqueAddrs.length}`;
     if (!cache.has(addr)) {
       const coords = await geocodeAddress(addr, null);
-      if (coords) cache.set(addr, coords);
+      if (coords) { cache.set(addr, coords); ok++; }
       await new Promise(r => setTimeout(r, 120));
     }
   }
   bars.forEach(b => {
     if (!hasGoodAddress(b)) return;
-    const c = cache.get(b.address.trim());
-    if (c) { b.lng = c[0]; b.lat = c[1]; }
+    const c = cache.get(addressCacheKey(b.address));
+    if (c) { b.lng = c[0]; b.lat = c[1]; } // Mapbox center is [longitude, latitude]
   });
+  const updated = bars.filter(b => hasGoodAddress(b) && cache.has(addressCacheKey(b.address))).length;
+  console.log("Geocoding: " + ok + " unique addresses resolved, " + updated + " bars updated. (Failures = no Mapbox result or missing token.)");
   return bars;
 }
 
@@ -484,27 +495,18 @@ async function loadBars(){
 function hideLoading(){const el=document.getElementById('loading');el.style.opacity='0';setTimeout(()=>el.style.display='none',500);}
 
 function renderMarkers(bars){
-  markers.forEach(m=>m.remove()); markers=[];
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
   bars.forEach(bar=>{
     if(!bar.lat||!bar.lng)return;
-    const el=document.createElement('div');
-    el.className='marker-pin';
     const iconBg = bar.price_found ? '#f5c542' : '#3a3530';
     const iconBorder = bar.price_found ? '#e08c00' : '#5a5040';
-    el.innerHTML=`<div class="marker-icon" style="background:${iconBg};border:2px solid ${iconBorder}">🍺</div><div class="marker-line"></div>`;
-    const popupContent=`<div class="popup-name">${bar.name}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button class="popup-open" onclick="window._openSidebar('${bar.id}')">See details →</button>`;
-    const popup=new mapboxgl.Popup({offset:20, closeButton:false})
-      .setLngLat([bar.lng,bar.lat])
-      .setHTML(popupContent);
+    const iconHtml = `<div class="marker-pin"><div class="marker-icon" style="background:${iconBg};border:2px solid ${iconBorder}">🍺</div><div class="marker-line"></div></div>`;
+    const icon = L.divIcon({ html: iconHtml, className: '', iconSize: [36, 54], iconAnchor: [18, 54] });
+    const popupContent = `<div class="popup-name">${bar.name}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button class="popup-open" onclick="window._openSidebar('${bar.id}')">See details →</button>`;
 
-    el.addEventListener('mouseenter',()=>popup.addTo(map));
-    el.addEventListener('mouseleave',()=>popup.remove());
-    el.addEventListener('click',()=>openSidebar(bar));
-
-    // Anchor at bottom so the tip of the line sits on the building
-    const marker=new mapboxgl.Marker({element:el, anchor:'bottom'})
-      .setLngLat([bar.lng,bar.lat])
-      .addTo(map);
+    const marker = L.marker([bar.lat, bar.lng], { icon }).addTo(map);
+    marker.bindPopup(popupContent, { closeButton: false, className: 'bar-popup' });
+    marker.on('click', () => openSidebar(bar));
     markers.push(marker);
   });
 }
@@ -520,12 +522,8 @@ function updateStats(barsWithPrice){
 window.openSidebar=function(bar){
   activeSidebarBar=bar;
   // Centre map on the selected bar for clarity
-  if(bar.lng != null && bar.lat != null){
-    map.flyTo({
-      center:[bar.lng, bar.lat],
-      zoom:15,
-      essential:true
-    });
+  if(bar.lat != null && bar.lng != null){
+    map.setView([bar.lat, bar.lng], 15, { animate: true });
   }
   document.getElementById('sb-name').textContent=bar.name;
   document.getElementById('sb-address').textContent=bar.address||'Stockholm';
