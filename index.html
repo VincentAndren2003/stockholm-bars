@@ -118,6 +118,8 @@
     .chat-input-row button:hover{background:#ffd666;}
     .chat-input-row button:disabled{opacity:0.6;cursor:not-allowed;}
     .chat-error{font-size:12px;color:#e08c6a;margin-top:4px;}
+    .search-bars-btn{background:rgba(245,197,66,0.2);border:1px solid rgba(245,197,66,0.5);border-radius:20px;padding:6px 14px;color:var(--gold);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
+    .search-bars-btn:hover{background:rgba(245,197,66,0.3);border-color:var(--gold);}
   </style>
 </head>
 <body>
@@ -149,6 +151,7 @@
     <label>Max price</label>
     <input type="range" id="price-filter" min="40" max="150" value="150" step="5"/>
     <span id="price-display">All prices</span>
+    <button type="button" class="search-bars-btn" id="header-search-btn" title="AI bar finder">🔍 Search bars</button>
   </div>
 </header>
 
@@ -612,9 +615,12 @@ function isBarOpenTillLate(bar){
 function renderMarkers(bars, hoursFilter){
   markers.forEach(m=>map.removeLayer(m)); markers=[];
   const showOpenNowClosed = hoursFilter==='open_now';
+  const showOpenLateClosed = hoursFilter==='open_late';
   bars.forEach(bar=>{
     if(!bar.lat||!bar.lng)return;
-    const isClosed = showOpenNowClosed && isBarOpenNow(bar)===false;
+    const closedForOpenNow = showOpenNowClosed && isBarOpenNow(bar)===false;
+    const closedForOpenLate = showOpenLateClosed && !isBarOpenTillLate(bar);
+    const isClosed = closedForOpenNow || closedForOpenLate;
     const iconBg = isClosed ? '#3a3530' : (bar.price_found ? '#f5c542' : '#3a3530');
     const iconBorder = isClosed ? '#4a4540' : (bar.price_found ? '#e08c00' : '#5a5040');
     const pinClass = isClosed ? ' closed' : '';
@@ -740,9 +746,7 @@ function applyFilters(){
   if(vibeVal){
     filtered=filtered.filter(b=>b.vibes&&b.vibes.length&&b.vibes.includes(vibeVal));
   }
-  if(hoursVal==='open_late'){
-    filtered=filtered.filter(b=>isBarOpenTillLate(b));
-  }
+  /* Don't filter out by hours: show all bars; renderMarkers will dim/icon the non-matching ones */
   if(priceVal<150){
     filtered=filtered.filter(b=>!b.price_found||b.cheapest_beer_sek<=priceVal);
   }
@@ -804,7 +808,9 @@ const chatClear=document.getElementById('chat-clear');
 
 function openChatPanel(){ chatPanel.classList.add('open'); chatInput.focus(); }
 function closeChatPanel(){ chatPanel.classList.remove('open'); }
-chatToggle.addEventListener('click', function(){ chatPanel.classList.toggle('open'); if(chatPanel.classList.contains('open')) chatInput.focus(); });
+function toggleChatPanel(){ chatPanel.classList.toggle('open'); if(chatPanel.classList.contains('open')) chatInput.focus(); }
+chatToggle.addEventListener('click', toggleChatPanel);
+document.getElementById('header-search-btn').addEventListener('click', function(){ chatPanel.classList.add('open'); chatInput.focus(); });
 chatClose.addEventListener('click', closeChatPanel);
 
 function appendChatMessage(role, text, barIds){
