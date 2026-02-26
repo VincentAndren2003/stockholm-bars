@@ -534,6 +534,19 @@ function renderMarkers(bars){
     marker._bar = bar;
     marker.bindPopup(popupContent, { closeButton: false, className: 'bar-popup' });
     marker.on('click', () => { openSidebar(bar); });
+    marker.on('popupopen', function(){
+      const el = marker.getPopup().getElement();
+      if (!el) return;
+      const btn = el.querySelector('.popup-open[data-bar-id]');
+      if (btn) {
+        btn.onclick = function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+          openSidebar(bar);
+          map.closePopup();
+        };
+      }
+    });
     markers.push(marker);
   });
 }
@@ -620,18 +633,8 @@ document.addEventListener('click', function(e){
     const id=btn.getAttribute('data-bar-id');
     if(id){
       const bar=allBars.find(b=>(b.id||'').toString()===id);
-      if(bar){
-        openSidebar(bar);
-        map.closePopup();
-      }
+      if(bar){ openSidebar(bar); map.closePopup(); }
     }
-  }
-}, true);
-document.addEventListener('mousedown', function(e){
-  const btn=e.target.closest('.popup-open[data-bar-id]');
-  if(btn){
-    e.preventDefault();
-    e.stopPropagation();
   }
 }, true);
 
