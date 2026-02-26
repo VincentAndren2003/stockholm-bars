@@ -124,6 +124,36 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+async function getPlaceDetails(apiKey, placeId) {
+  const params = new URLSearchParams({
+    place_id: placeId,
+    fields: 'photos,rating',
+    key: apiKey,
+    language: 'en',
+  });
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?${params}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.status !== 'OK') return null;
+  const result = data.result || {};
+  const photoRef = result.photos?.[0]?.photo_reference || null;
+  const rating = result.rating != null ? Number(result.rating) : null;
+  return { photo_reference: photoRef, rating };
+}
+
+function deriveVibes(row, rating) {
+  const vibes = [];
+  const dance = String(row.dance_floor || '').toLowerCase();
+  if (dance === 'yes') {
+    vibes.push('party', 'girls-night');
+  }
+  if (rating != null && rating >= 4.2) {
+    vibes.push('dating', 'chill');
+  }
+  if (vibes.length === 0) vibes.push('chill');
+  return [...new Set(vibes)];
+}
+
 async function main() {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -180,6 +210,19 @@ async function main() {
     }
     const finalAddress = (place?.formatted_address || correctAddr || outAddress || '').trim() || null;
 
+    let photo_reference = null;
+    let placeRating = null;
+    if (place?.place_id) {
+      try {
+        const details = await getPlaceDetails(apiKey, place.place_id);
+        await sleep(200);
+        if (details) {
+          photo_reference = details.photo_reference || null;
+          placeRating = details.rating;
+        }
+      } catch (_) {}
+    }
+
     let opening_hours = row.opening_hours || null;
     if (opening_hours && typeof opening_hours === 'string' && (opening_hours.startsWith('{') || opening_hours.startsWith('"'))) {
       try {
@@ -198,6 +241,9 @@ async function main() {
       dance_floor: (row.dance_floor || 'unknown').toLowerCase(),
       dance_notes: row.dance_notes || null,
       last_updated: row.last_updated || null,
+      place_id: place?.place_id || null,
+      photo_reference: photo_reference || null,
+      vibes: deriveVibes(row, placeRating),
     };
     if (place?.formatted_address) barEntry.correct_address = place.formatted_address;
     bars.push(barEntry);
