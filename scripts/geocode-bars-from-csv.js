@@ -1,15 +1,19 @@
 #!/usr/bin/env node
 /**
- * Reads Newbars1_rows.csv, geocodes each bar's "location" with Mapbox,
- * writes bars.json with correct lat/lng for the website.
- * Usage: node scripts/geocode-bars-from-csv.js [path-to-csv]
- * CSV path defaults to ../Downloads/Newbars1_rows.csv or same folder as script.
+ * Geocodes every bar's "location" with Mapbox and writes bars.json for the website.
+ * Usage:
+ *   node scripts/geocode-bars-from-csv.js [path-to-csv]
+ *   node scripts/geocode-bars-from-csv.js data/source-bars.json
+ * CSV path defaults to ../../Downloads/Newbars1_rows.csv. JSON = array of { bar_name, location, id, price, ... }.
+ * Run once, then the site loads bars.json with no geocoding on load.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const CSV_PATH = path.resolve(__dirname, process.argv[2] || '../../Downloads/Newbars1_rows.csv');
+const inputArg = process.argv[2];
+const defaultCsv = path.resolve(__dirname, '../../Downloads/Newbars1_rows.csv');
+const INPUT_PATH = inputArg ? path.resolve(process.cwd(), inputArg) : defaultCsv;
 const OUT_PATH = path.resolve(__dirname, '../bars.json');
 const ENV_CONFIG_PATH = path.resolve(__dirname, '../env-config.js');
 
@@ -26,6 +30,11 @@ function getToken() {
     if (m) return m[1];
   }
   return process.env.MAPBOX_TOKEN || '';
+}
+
+function addressKey(loc) {
+  if (!loc || typeof loc !== 'string') return '';
+  return loc.trim().replace(/\s+/g, ' ');
 }
 
 function parseCSVLine(line) {
@@ -61,50 +70,61 @@ function parseCSV(text) {
   return rows;
 }
 
-async function geocode(address, token) {
-  if (!address || !token || address === 'null') return null;
-  const query = encodeURIComponent(address.includes('Stockholm') ? address : address + ', Stockholm, Sweden');
-  const bbox = '17.95,59.28,18.15,59.36';
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&country=se&types=address,place,poi&limit=1&bbox=${bbox}&proximity=18.0686,59.3172`;
+async function geocodePhoton(address, logFirst) {
+  if (!address || !address.trim() || /^null$/i.test(address)) return null;
+  const query = address.includes('Stockholm') ? address : address + ', Stockholm, Sweden';
+  const params = new URLSearchParams({ q: query, limit: 1, lang: 'en' });
+  const url = `https://photon.komoot.io/api/?${params}`;
   try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.features && data.features.length > 0) return data.features[0].center;
-  } catch (e) {}
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const text = await res.text();
+    if (logFirst) console.log('Photon:', res.status, '| length:', text.length);
+    const data = JSON.parse(text);
+    const features = data.features;
+    if (features && features.length > 0) {
+      const coord = features[0].geometry?.coordinates;
+      if (coord && coord.length >= 2) return [Number(coord[0]), Number(coord[1])];
+    }
+  } catch (e) { if (logFirst) console.error('Geocode error:', e.message); }
   return null;
 }
 
 async function main() {
-  const token = getToken();
-  if (!token) {
-    console.error('No MAPBOX_TOKEN in env-config.js or .env');
+  let rows = [];
+  const isJson = INPUT_PATH.toLowerCase().endsWith('.json');
+  if (isJson && fs.existsSync(INPUT_PATH)) {
+    const data = JSON.parse(fs.readFileSync(INPUT_PATH, 'utf8'));
+    rows = Array.isArray(data) ? data : (data.bars || data.data || []);
+    console.log('Rows from JSON:', rows.length);
+  } else if (!isJson && fs.existsSync(INPUT_PATH)) {
+    const csvText = fs.readFileSync(INPUT_PATH, 'utf8');
+    rows = parseCSV(csvText);
+    console.log('Rows from CSV:', rows.length);
+  } else {
+    console.error('Input not found:', INPUT_PATH);
     process.exit(1);
   }
 
-  if (!fs.existsSync(CSV_PATH)) {
-    console.error('CSV not found:', CSV_PATH);
-    process.exit(1);
-  }
-
-  const csvText = fs.readFileSync(CSV_PATH, 'utf8');
-  const rows = parseCSV(csvText);
-  console.log('Rows from CSV:', rows.length);
-
+  console.log('Geocoding with Photon (Komoot)...');
+  const coordCache = new Map();
   const bars = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const location = (row.location || '').trim().replace(/^"|"$/g, '');
     const barName = (row.bar_name || row.name || 'Unknown').replace(/^"|"$/g, '');
-    let lat = row.lat ? parseFloat(String(row.lat).replace(',', '.')) : null;
-    let lng = row.lng ? parseFloat(String(row.lng).replace(',', '.')) : null;
+    let lat = row.lat != null ? parseFloat(String(row.lat).replace(',', '.')) : null;
+    let lng = row.lng != null ? parseFloat(String(row.lng).replace(',', '.')) : null;
 
-    if (location && (!lat || !lng || (lat === 59.31667 && lng === 18.06745))) {
-      const center = await geocode(location, token);
-      if (center) {
-        lng = center[0];
-        lat = center[1];
+    if (location && location.length > 2 && !/^null$/i.test(location)) {
+      const key = addressKey(location);
+      if (!coordCache.has(key)) {
+        const logFirst = coordCache.size === 0;
+        const center = await geocodePhoton(location, logFirst);
+        if (center) coordCache.set(key, { lng: center[0], lat: center[1] });
+        await new Promise(r => setTimeout(r, 250));
       }
-      await new Promise(r => setTimeout(r, 120));
+      const cached = coordCache.get(key);
+      if (cached) { lng = cached.lng; lat = cached.lat; }
     }
 
     let opening_hours = row.opening_hours || null;
@@ -118,13 +138,13 @@ async function main() {
       location: location || null,
       lat: lat,
       lng: lng,
-      price: row.price ? parseInt(row.price, 10) : null,
+      price: row.price != null ? parseInt(row.price, 10) : null,
       opening_hours: opening_hours,
       dance_floor: (row.dance_floor || 'unknown').toLowerCase(),
       dance_notes: row.dance_notes || null,
       last_updated: row.last_updated || null
     });
-    if ((i + 1) % 10 === 0) console.log('Geocoded', i + 1, '/', rows.length);
+    if ((i + 1) % 15 === 0) console.log('Processed', i + 1, '/', rows.length, '| unique addresses geocoded:', coordCache.size);
   }
 
   fs.writeFileSync(OUT_PATH, JSON.stringify(bars, null, 2), 'utf8');
