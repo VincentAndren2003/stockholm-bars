@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     /* ────────────────────────────────────────────── */
-    :root { --gold:#f5c542;--amber:#e08c00;--dark:#0e0c09;--dark2:#1a1710;--card:#201e19;--text:#f0ead8;--muted:#7a7060;--green:#5ecb7a; }
+    :root { --gold:#f5c542;--amber:#e08c00;--dark:#0e0c09;--dark2:#1a1710;--card:#201e19;--text:#f0ead8;--muted:#7a7060;--green:#5ecb7a;--fav:#e85d7a;--fav-bg:rgba(232,93,122,0.2); }
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);height:100vh;overflow:hidden;}
     header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,12,9,0.97);pointer-events:none;box-shadow:0 1px 0 rgba(255,255,255,0.05);}
@@ -74,12 +74,17 @@
     .search-chips button:hover{color:var(--gold);border-color:rgba(245,197,66,0.4);}
     .search-loading{display:inline-flex;align-items:center;gap:6px;}
     .search-loading .mini-spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:var(--dark);border-radius:50%;animation:spin 0.6s linear infinite;}
-    .fav-btn{border:none;background:transparent;cursor:pointer;font-size:18px;padding:4px;}
-    .fav-btn.faved{opacity:1;}
-    .fav-btn:not(.faved){opacity:0.4;}
-    .fav-btn:hover{opacity:1;}
+    .fav-btn{border:none;background:transparent;cursor:pointer;font-size:22px;padding:6px;transition:transform 0.2s, color 0.2s;}
+    .fav-btn:hover{transform:scale(1.15);}
+    .fav-btn:not(.faved){color:var(--muted);opacity:0.7;}
+    .fav-btn.faved{color:var(--fav);opacity:1;}
+    .fav-btn:hover.faved{color:#ff7a96;}
     .filter-fav-wrap{display:flex;align-items:center;}
-    .filter-fav-wrap .hours-pill{margin-left:0;}
+    #filter-fav-btn{background:transparent;border:1px solid rgba(232,93,122,0.4);color:var(--fav);}
+    #filter-fav-btn:hover{background:var(--fav-bg);border-color:var(--fav);color:#ff8fa3;}
+    #filter-fav-btn.active{background:var(--fav-bg);border-color:var(--fav);color:#ff8fa3;}
+    .clear-filter-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
+    .clear-filter-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);}
     .sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);}
     .suggest-btn{width:100%;padding:12px;background:transparent;border:1px solid rgba(245,197,66,0.3);color:var(--gold);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;}
     .suggest-btn:hover{background:rgba(245,197,66,0.08);border-color:var(--gold);}
@@ -190,6 +195,7 @@
     <label for="price-filter">Max price</label>
     <input type="range" id="price-filter" min="40" max="150" value="150" step="5" aria-label="Maximum beer price in SEK"/>
     <span id="price-display">All prices</span>
+    <button type="button" class="clear-filter-btn" id="clear-filter-btn" aria-label="Clear filters and show all bars">Clear filter</button>
   </div>
 </header>
 
@@ -707,7 +713,7 @@ function renderMarkers(bars, hoursFilter){
     const iconBg = isClosed ? '#3a3530' : (bar.price_found ? '#f5c542' : '#3a3530');
     const iconBorder = isClosed ? '#4a4540' : (bar.price_found ? '#e08c00' : '#5a5040');
     const pinClass = isClosed ? ' closed' : '';
-    const favBadge = isFav ? '<span style="position:absolute;top:-2px;right:-2px;font-size:10px;">♥</span>' : '';
+    const favBadge = isFav ? '<span style="position:absolute;top:-3px;right:-3px;font-size:12px;color:#e85d7a;text-shadow:0 0 4px rgba(0,0,0,0.8);">♥</span>' : '';
     const iconHtml = `<div class="marker-pin${pinClass}"><div class="marker-icon" style="position:relative;background:${iconBg};border:2px solid ${iconBorder}">${isClosed?'🔒':'🍺'}${favBadge}</div><div class="marker-line"></div></div>`;
     const icon = L.divIcon({ html: iconHtml, className: '', iconSize: [36, 54], iconAnchor: [18, 54] });
     const barIdEscaped = (bar.id || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -887,6 +893,23 @@ document.querySelectorAll('.hours-pill').forEach(btn=>{
     applyFilters();
   });
 });
+function clearAllFilters(){
+  aiFilterBarIds=null;
+  document.querySelectorAll('.hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+  var allPill=document.querySelector('.hours-pill[data-hours=""]');
+  if(allPill){ allPill.classList.add('active'); allPill.setAttribute('aria-pressed','true'); }
+  var slider=document.getElementById('price-filter');
+  if(slider){ slider.value=150; }
+  var display=document.getElementById('price-display');
+  if(display) display.textContent='All prices';
+  var pct=100;
+  if(slider) slider.style.background='linear-gradient(to right, #f5c542 0%, #f5c542 '+pct+'%, rgba(255,255,255,0.1) '+pct+'%)';
+  var chatClearWrap=document.getElementById('chat-clear-wrap');
+  if(chatClearWrap) chatClearWrap.style.display='none';
+  applyFilters();
+}
+var clearFilterBtn=document.getElementById('clear-filter-btn');
+if(clearFilterBtn) clearFilterBtn.addEventListener('click', clearAllFilters);
 const slider=document.getElementById('price-filter'); const display=document.getElementById('price-display');
 slider.addEventListener('input',()=>{
   const val=parseInt(slider.value);
