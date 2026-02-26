@@ -110,7 +110,7 @@ async function main() {
   const bars = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    const location = (row.location || '').trim().replace(/^"|"$/g, '');
+    const location = (row.correct_address || row.location || row.address || '').trim().replace(/^"|"$/g, '');
     const barName = (row.bar_name || row.name || 'Unknown').replace(/^"|"$/g, '');
     let lat = row.lat != null ? parseFloat(String(row.lat).replace(',', '.')) : null;
     let lng = row.lng != null ? parseFloat(String(row.lng).replace(',', '.')) : null;
@@ -132,10 +132,12 @@ async function main() {
       try { opening_hours = JSON.parse(opening_hours.replace(/^"|"$/g, '').replace(/""/g, '"')); } catch (_) {}
     }
 
-    bars.push({
+    const correctAddr = (row.correct_address || '').trim().replace(/^"|"$/g, '') || null;
+    const outAddress = correctAddr || (row.location || row.address || '').trim().replace(/^"|"$/g, '') || null;
+    const barEntry = {
       id: row.id || barName.toLowerCase().replace(/\s+/g, '-'),
       bar_name: barName,
-      location: location || null,
+      location: outAddress || null,
       lat: lat,
       lng: lng,
       price: row.price != null ? parseInt(row.price, 10) : null,
@@ -143,7 +145,9 @@ async function main() {
       dance_floor: (row.dance_floor || 'unknown').toLowerCase(),
       dance_notes: row.dance_notes || null,
       last_updated: row.last_updated || null
-    });
+    };
+    if (correctAddr) barEntry.correct_address = correctAddr;
+    bars.push(barEntry);
     if ((i + 1) % 15 === 0) console.log('Processed', i + 1, '/', rows.length, '| unique addresses geocoded:', coordCache.size);
   }
 
