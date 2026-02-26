@@ -546,9 +546,9 @@ function updateStats(barsWithPrice){
 
 window.openSidebar=function(bar){
   activeSidebarBar=bar;
-  // Centre map on the selected bar for clarity
+  // Pan to bar but keep current zoom so user's zoom level is preserved
   if(bar.lat != null && bar.lng != null){
-    map.setView([bar.lat, bar.lng], 15, { animate: true });
+    map.panTo([bar.lat, bar.lng], { animate: true });
   }
   document.getElementById('sb-name').textContent=bar.name;
   document.getElementById('sb-address').textContent=bar.address||'Stockholm';
@@ -618,10 +618,20 @@ document.addEventListener('click', function(e){
     const id=btn.getAttribute('data-bar-id');
     if(id){
       const bar=allBars.find(b=>(b.id||'').toString()===id);
-      if(bar){ openSidebar(bar); }
+      if(bar){
+        openSidebar(bar);
+        map.closePopup();
+      }
     }
   }
-});
+}, true);
+document.addEventListener('mousedown', function(e){
+  const btn=e.target.closest('.popup-open[data-bar-id]');
+  if(btn){
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
 
 function applyFilters(){
   const vibeVal=(document.getElementById('vibe-filter')?.value||'').trim().toLowerCase();
