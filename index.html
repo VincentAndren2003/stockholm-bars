@@ -752,8 +752,9 @@ function applyFilters(){
   const hoursVal=(hoursEl?.getAttribute('data-hours')||'').trim();
   const priceVal=parseInt(document.getElementById('price-filter')?.value,10)||150;
   let filtered=allBars;
-  if(aiFilterBarIds&&aiFilterBarIds.length){ filtered=filtered.filter(b=>aiFilterBarIds.includes(b.id)); }
-  if(vibeVal){
+  const hasAiSearch=aiFilterBarIds&&aiFilterBarIds.length>0;
+  if(hasAiSearch){ filtered=filtered.filter(b=>aiFilterBarIds.includes(b.id)); }
+  if(!hasAiSearch&&vibeVal){
     filtered=filtered.filter(b=>b.vibes&&b.vibes.length&&b.vibes.includes(vibeVal));
   }
   /* Don't filter out by hours: show all bars; renderMarkers will dim/icon the non-matching ones */
@@ -835,6 +836,17 @@ function runAiSearch(){
 if (aiSearchBtn) aiSearchBtn.addEventListener('click', runAiSearch);
 if (aiSearchInput) aiSearchInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); runAiSearch(); } });
 
+function findBarByIdOrName(idOrName){
+  if(!allBars||!idOrName)return null;
+  const s=String(idOrName).trim().toLowerCase();
+  let bar=allBars.find(b=>(b.id||'').toString().toLowerCase()===s);
+  if(bar)return bar;
+  bar=allBars.find(b=>(b.name||'').toLowerCase().replace(/\s+/g,'-')===s.replace(/\s+/g,'-'));
+  if(bar)return bar;
+  bar=allBars.find(b=>(b.name||'').toLowerCase().includes(s)||s.includes((b.name||'').toLowerCase()));
+  return bar||null;
+}
+
 function appendChatMessage(role, text, barIds){
   const div=document.createElement('div');
   div.className='chat-msg ' + role;
@@ -842,9 +854,11 @@ function appendChatMessage(role, text, barIds){
   if(barIds&&barIds.length&&typeof allBars!=='undefined'){
     const list=document.createElement('div');
     list.className='chat-bar-list';
+    const seen=new Set();
     barIds.forEach(id=>{
-      const bar=allBars.find(b=>b.id===id);
-      if(!bar)return;
+      const bar=allBars.find(b=>b.id===id)||findBarByIdOrName(id);
+      if(!bar||seen.has(bar.id))return;
+      seen.add(bar.id);
       const a=document.createElement('a');
       a.href='#';
       a.textContent=bar.name+(bar.cheapest_beer_sek!=null?' · '+bar.cheapest_beer_sek+' kr':'');
@@ -869,6 +883,38 @@ chatClear.addEventListener('click', clearAiSearch);
 chatSend.addEventListener('click', sendChatMessage);
 chatInput.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); sendChatMessage(); } });
 
+function localBarSearch(query){
+  if(!allBars||!allBars.length)return { barIds: [], reply: 'No bars loaded yet.' };
+  const q=query.toLowerCase().trim();
+  const words=q.split(/\s+/).filter(Boolean);
+  const vibeKeywords={ chill:'chill', party:'party', dating:'dating', date:'dating', 'girls night':'girls-night', 'girls-night':'girls-night', dance:'dance', dancing:'dance', gay:'', cheap:'', beer:'', late:'' };
+  const matched=[];
+  allBars.forEach(bar=>{
+    let score=0;
+    const name=(bar.name||'').toLowerCase();
+    const vibes=bar.vibes||[];
+    const danceNotes=(bar.dance_notes||'').toLowerCase();
+    const hasDance=bar.dance_floor==='yes'||/danc|dance/i.test(danceNotes);
+    for(const w of words){
+      if(vibeKeywords[w]==='chill'&&vibes.includes('chill'))score+=3;
+      else if((vibeKeywords[w]==='party'||w==='party')&&vibes.includes('party'))score+=3;
+      else if((vibeKeywords[w]==='dating'||w==='date')&&vibes.includes('dating'))score+=3;
+      else if((vibeKeywords[w]==='girls-night'||w==='girls')&&vibes.includes('girls-night'))score+=3;
+      else if((vibeKeywords[w]==='dance'||w==='dancing')&&(vibes.includes('party')||hasDance))score+=2;
+      else if(w==='gay'&&(name.includes('gay')||danceNotes.includes('gay')||vibes.some(v=>/gay|lgbt|queer/i.test(v))))score+=3;
+      else if((w==='cheap'||w==='budget')&&bar.cheapest_beer_sek!=null&&bar.cheapest_beer_sek<55)score+=2;
+      else if(w==='beer'&&bar.price_found)score+=1;
+      else if(name.includes(w))score+=2;
+      else if(danceNotes.includes(w))score+=1;
+    }
+    if(score>0)matched.push({ bar, score });
+  });
+  matched.sort((a,b)=>b.score-a.score);
+  const barIds=matched.slice(0,15).map(m=>m.bar.id);
+  const reply=barIds.length?('Found '+barIds.length+' bar'+(barIds.length===1?'':'s')+' matching your search.'):'No bars matched. Try "chill", "party", "dance" or a bar name.';
+  return { barIds, reply };
+}
+
 async function sendChatMessage(){
   const msg=(chatInput.value||'').trim();
   if(!msg)return;
@@ -881,19 +927,29 @@ async function sendChatMessage(){
     const res=await fetch('/api/bar-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }) });
     const data=await res.json().catch(()=>({}));
     if(!res.ok){
-      appendChatMessage('bot', data.reply||data.error||'Something went wrong.');
-      if(data.error) { chatError.textContent=data.error; chatError.style.display='block'; }
+      var local=localBarSearch(msg);
+      aiFilterBarIds=local.barIds;
+      chatClearWrap.style.display=local.barIds.length?'block':'none';
+      applyFilters();
+      appendChatMessage('bot', local.reply, local.barIds);
+      if(data.error) { chatError.textContent='API: '+data.error; chatError.style.display='block'; }
       return;
     }
-    aiFilterBarIds=data.barIds||[];
+    var ids=Array.isArray(data.barIds)?data.barIds:[];
+    var resolvedIds=ids.map(id=>{ var b=allBars.find(x=>x.id===id)||findBarByIdOrName(id); return b?b.id:null; }).filter(Boolean);
+    if(resolvedIds.length===0&&ids.length>0){ var local=localBarSearch(msg); resolvedIds=local.barIds; }
+    aiFilterBarIds=resolvedIds.length?resolvedIds:ids;
     chatClearWrap.style.display=aiFilterBarIds.length?'block':'none';
     applyFilters();
-    appendChatMessage('bot', data.reply||'Here are some matches.', data.barIds);
+    appendChatMessage('bot', data.reply||'Here are some matches.', aiFilterBarIds);
   }catch(err){
     console.error('Chat request failed:', err);
-    appendChatMessage('bot', 'Could not reach the server. Run "node server.js" for local dev or deploy with an API that provides /api/bar-chat.');
-    chatError.textContent=err.message||'Network error';
-    chatError.style.display='block';
+    var local=localBarSearch(msg);
+    aiFilterBarIds=local.barIds;
+    chatClearWrap.style.display=local.barIds.length?'block':'none';
+    applyFilters();
+    appendChatMessage('bot', local.reply+(local.barIds.length?'':' (Server unreachable — run "node server.js" for AI search.)'), local.barIds);
+    if(!local.barIds.length){ chatError.textContent=err.message||'Network error'; chatError.style.display='block'; }
   }finally{
     chatSend.disabled=false;
   }
