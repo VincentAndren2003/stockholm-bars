@@ -7,6 +7,8 @@
   <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#f5c542"/>
   <style>
     /* ────────────────────────────────────────────── */
     :root { --gold:#f5c542;--amber:#e08c00;--dark:#0e0c09;--dark2:#1a1710;--card:#201e19;--text:#f0ead8;--muted:#7a7060;--green:#5ecb7a;--fav:#e85d7a;--fav-bg:rgba(232,93,122,0.2); }
@@ -29,9 +31,10 @@
     .filter-hours .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
     .filter-hours .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
     .filter-hours .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
-    .filter-bar input[type="range"]{-webkit-appearance:none;width:120px;height:3px;background:linear-gradient(to right, var(--gold) 0%, var(--gold) 50%, rgba(255,255,255,0.1) 50%);border-radius:2px;outline:none;}
-    .filter-bar input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
+    .filter-bar input[type="range"]{appearance:none;-webkit-appearance:none;width:120px;height:3px;background:linear-gradient(to right, var(--gold) 0%, var(--gold) 50%, rgba(255,255,255,0.1) 50%);border-radius:2px;outline:none;}
+    .filter-bar input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
     #price-display{font-size:13px;font-weight:500;color:var(--gold);min-width:60px;}
+    .filter-price-row{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}
     #map{width:100%;height:100vh;}
     #sidebar-backdrop{position:fixed;inset:0;background:transparent;z-index:1400;pointer-events:none;transition:background 0.2s;}
     #sidebar-backdrop.visible{pointer-events:auto;background:rgba(0,0,0,0.35);}
@@ -86,7 +89,11 @@
       .filter-bar-content .filter-hours{flex-wrap:wrap;}
       .filter-bar-content .filter-fav-wrap{margin:0;}
     }
-    @media (min-width:769px){ .filter-bar-trigger{display:none !important;} .filter-bar-content{display:flex !important;} }
+    @media (min-width:769px){
+      .filter-bar-trigger{display:none !important;}
+      .filter-bar-content{display:flex !important;flex-wrap:wrap;}
+      .filter-price-row{flex-basis:100%;margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);}
+    }
     .search-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
     .search-chips button{background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:4px 10px;color:var(--muted);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
     .search-chips button:hover{color:var(--gold);border-color:rgba(245,197,66,0.4);}
@@ -120,8 +127,13 @@
     .leaflet-container a.leaflet-popup-close-button{color:var(--muted);}
     .popup-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;}
     .popup-price{font-size:22px;font-weight:500;color:var(--gold);}
-    .popup-price span{font-size:12px;color:#7a7060;font-weight:300;}
-    .popup-open{margin-top:8px;font-size:11px;color:#7a7060;cursor:pointer;text-decoration:underline;background:none;border:none;color:var(--muted);padding:0;font-family:'DM Sans',sans-serif;}
+    .popup-price span{font-size:12px;color:var(--muted);font-weight:300;}
+    .popup-price-unknown{font-size:12px;color:var(--muted);margin-top:4px;}
+    .popup-photo{width:64px;height:64px;border-radius:8px;overflow:hidden;margin-bottom:6px;}
+    .popup-photo img{width:100%;height:100%;object-fit:cover;}
+    .popup-hours{font-size:11px;color:var(--muted);margin-top:2px;}
+    .popup-updated{font-size:10px;color:var(--muted);margin-top:2px;}
+    .popup-open{margin-top:8px;font-size:11px;cursor:pointer;text-decoration:underline;background:none;border:none;color:var(--muted);padding:0;font-family:'DM Sans',sans-serif;}
     .popup-open:hover{color:var(--gold);}
     #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center;}
     #modal-overlay.open{display:flex;}
@@ -139,7 +151,8 @@
     .btn-submit:hover{background:#ffd666;}
     .marker-unknown{opacity:0.4;}
     /* Pin: icon on top, line points down to building */
-    .marker-pin{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
+    .marker-pin{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform 0.2s;}
+    .marker-pin:hover{transform:scale(1.08);}
     .marker-pin .marker-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,0.5);flex-shrink:0;}
     .marker-pin .marker-line{width:2px;height:18px;background:var(--gold);opacity:0.9;}
     .marker-pin.closed .marker-icon{background:#3a3530 !important;border-color:#4a4540 !important;opacity:0.85;}
@@ -173,6 +186,32 @@
     .chat-error{font-size:12px;color:#e08c6a;margin-top:4px;}
     .search-bars-btn{background:rgba(245,197,66,0.2);border:1px solid rgba(245,197,66,0.5);border-radius:20px;padding:6px 14px;color:var(--gold);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
     .search-bars-btn:hover{background:rgba(245,197,66,0.3);border-color:var(--gold);}
+    #bar-list-toggle{display:none;position:fixed;bottom:90px;right:20px;z-index:100;width:48px;height:48px;border-radius:50%;background:var(--card);border:2px solid rgba(245,197,66,0.4);color:var(--gold);font-size:14px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.4);transition:transform 0.2s, opacity 0.2s;}
+    #bar-list-toggle:hover{transform:scale(1.05);}
+    #bar-list-sheet{display:none;position:fixed;left:0;right:0;bottom:0;max-height:45vh;background:var(--dark2);border-top:1px solid rgba(245,197,66,0.2);z-index:150;border-radius:16px 16px 0 0;flex-direction:column;box-shadow:0 -8px 32px rgba(0,0,0,0.5);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100%);overflow:hidden;}
+    #bar-list-sheet.visible{display:flex;}
+    #bar-list-sheet.open{transform:translateY(0);}
+    #bar-list-sheet .list-handle{width:36px;height:4px;background:var(--muted);border-radius:2px;margin:10px auto;}
+    #bar-list-sheet .list-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:0 16px 8px;}
+    #bar-list-sheet .list-scroll{overflow-y:auto;flex:1;padding:0 12px 24px;}
+    .bar-list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 10px;border-radius:10px;cursor:pointer;transition:background 0.2s;}
+    .bar-list-item:hover{background:rgba(255,255,255,0.06);}
+    .bar-list-item .name{font-weight:500;color:var(--text);}
+    .bar-list-item .price{color:var(--gold);font-weight:600;}
+    @media (max-width:768px){ #bar-list-toggle{display:flex;} }
+    @media (min-width:769px){ #bar-list-sheet{display:none !important;} }
+    body.light-theme{--dark:#f5f0e6;--dark2:#ebe5da;--card:#e0d9cc;--text:#1a1710;--muted:#5a5040;}
+    body.light-theme .leaflet-popup-content-wrapper{background:var(--card);}
+    body.light-theme #sidebar{background:var(--dark2);}
+    #theme-toggle{background:transparent;border:1px solid rgba(255,197,66,0.4);border-radius:20px;padding:6px 10px;color:var(--gold);cursor:pointer;font-size:12px;}
+    .compare-modal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:20px;}
+    .compare-modal.open{display:flex;}
+    .compare-modal .modal{max-width:420px;width:100%;}
+    .compare-modal .compare-row{display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.08);font-size:13px;}
+    .compare-modal .compare-row .label{color:var(--muted);}
+    .sb-directions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+    .sb-directions a{font-size:12px;color:var(--gold);text-decoration:none;border:1px solid rgba(245,197,66,0.3);border-radius:8px;padding:6px 12px;}
+    .sb-directions a:hover{background:rgba(245,197,66,0.1);}
   </style>
 </head>
 <body>
@@ -188,6 +227,7 @@
     <h1>Billigaste Ölen</h1>
     <span>Stockholm Beer Prices</span>
   </a>
+  <button type="button" id="theme-toggle" aria-label="Toggle light theme">☀️</button>
   <div class="filter-bar" id="filter-bar">
     <button type="button" class="filter-bar-trigger" id="filter-bar-trigger" aria-expanded="false" aria-controls="filter-bar-content" aria-label="Open filters and search">
       <span>Filters & search</span>
@@ -214,11 +254,16 @@
       </span>
       <span class="filter-fav-wrap">
         <button type="button" class="hours-pill" id="filter-fav-btn" data-hours="favourites" aria-pressed="false" title="Show only favourites">♥ Favourites</button>
+        <button type="button" class="hours-pill" id="filter-watchlist-btn" data-hours="watchlist" aria-pressed="false" title="Bars to check back">📌 Watchlist</button>
       </span>
-      <label for="price-filter">Max price</label>
-      <input type="range" id="price-filter" min="40" max="150" value="150" step="5" aria-label="Maximum beer price in SEK"/>
-      <span id="price-display">All prices</span>
-      <button type="button" class="clear-filter-btn" id="clear-filter-btn" aria-label="Clear filters and show all bars">Clear filter</button>
+      <button type="button" class="hours-pill" id="near-me-btn" aria-label="Show bars near me">📍 Near me</button>
+      <span class="filter-price-row">
+        <label for="price-filter">Max price</label>
+        <input type="range" id="price-filter" min="40" max="150" value="150" step="5" aria-label="Maximum beer price in SEK"/>
+        <span id="price-display">All prices</span>
+        <button type="button" class="clear-filter-btn" id="clear-filter-btn" aria-label="Clear filters and show all bars">Clear filter</button>
+        <button type="button" class="clear-filter-btn" id="share-list-btn" aria-label="Share current list">Share list</button>
+      </span>
     </div>
   </div>
   <div class="filter-dropdown-backdrop" id="filter-dropdown-backdrop" aria-hidden="true"></div>
@@ -242,6 +287,13 @@
     <button type="button" id="chat-send">Send</button>
   </div>
   <div id="chat-error" class="chat-error" style="display:none;"></div>
+</div>
+
+<button type="button" id="bar-list-toggle" aria-label="Open bar list">📋</button>
+<div id="bar-list-sheet" role="dialog" aria-label="Bar list">
+  <div class="list-handle"></div>
+  <div class="list-title">Bars (tap to open)</div>
+  <div class="list-scroll" id="bar-list-scroll"></div>
 </div>
 
 <div class="stats-bar">
@@ -299,6 +351,9 @@
   </div>
   <div class="sidebar-footer">
     <a id="sb-share-link" href="#" style="display:none;font-size:12px;color:var(--muted);margin-bottom:8px;" aria-label="Copy link to this bar">🔗 Copy link to bar</a>
+    <div class="sb-directions" id="sb-directions" style="display:none;"></div>
+    <button type="button" class="suggest-btn" id="sb-compare-btn" style="display:none;margin-bottom:8px;" aria-label="Add to compare">⚖️ Compare bars</button>
+    <button type="button" class="suggest-btn" id="sb-watchlist-btn" style="margin-bottom:8px;" aria-label="Add to watchlist">📌 Watchlist</button>
     <button class="suggest-btn" onclick="openModal()" aria-label="Suggest a price update">✏️ Suggest a price update</button>
   </div>
 </div>
@@ -312,6 +367,16 @@
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-submit" onclick="submitSuggestion()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<div id="compare-modal" class="compare-modal" aria-hidden="true">
+  <div class="modal">
+    <h3>Compare bars</h3>
+    <div id="compare-content"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeCompareModal()">Close</button>
     </div>
   </div>
 </div>
@@ -337,12 +402,22 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 map.zoomControl.setPosition('bottomright');
 
-let allBars=[]; let markers=[]; let activeSidebarBar=null; let aiFilterBarIds=null;
+let allBars=[]; let markers=[]; let activeSidebarBar=null; let aiFilterBarIds=null; let visibleBarsForList=[]; let nearMeIds=null;
 
 var FAV_STORAGE_KEY = 'bar-favourites';
+var WATCHLIST_STORAGE_KEY = 'bar-watchlist';
+var THEME_STORAGE_KEY = 'bar-theme';
+var COMPARE_STORAGE_KEY = 'bar-compare';
 function getFavouriteIds(){ try { var j = localStorage.getItem(FAV_STORAGE_KEY); return j ? JSON.parse(j) : []; } catch(e){ return []; } }
 function setFavouriteIds(ids){ try { localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify(ids)); } catch(e){} }
 function toggleFavourite(barId){ var ids = getFavouriteIds(); var i = ids.indexOf(barId); if (i >= 0) ids.splice(i, 1); else ids.push(barId); setFavouriteIds(ids); applyFilters(); }
+function getWatchlistIds(){ try { var j = localStorage.getItem(WATCHLIST_STORAGE_KEY); return j ? JSON.parse(j) : []; } catch(e){ return []; } }
+function setWatchlistIds(ids){ try { localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(ids)); } catch(e){} }
+function toggleWatchlist(barId){ var ids = getWatchlistIds(); var i = ids.indexOf(barId); if (i >= 0) ids.splice(i, 1); else ids.push(barId); setWatchlistIds(ids); }
+function getCompareIds(){ try { var j = localStorage.getItem(COMPARE_STORAGE_KEY); return j ? JSON.parse(j) : []; } catch(e){ return []; } }
+function setCompareIds(ids){ try { localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(ids)); } catch(e){} }
+function addToCompare(barId){ var ids = getCompareIds(); if (ids.includes(barId)) return; if (ids.length >= 3) ids.shift(); ids.push(barId); setCompareIds(ids); }
+function applyTheme(light){ document.body.classList.toggle('light-theme', !!light); try { localStorage.setItem(THEME_STORAGE_KEY, light ? 'light' : 'dark'); } catch(e){} document.getElementById('theme-toggle').setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme'); document.getElementById('theme-toggle').textContent = light ? '🌙' : '☀️'; }
 
 // Parse lat/lng from DB (number, string, or comma decimal)
 function parseCoord(value){
@@ -723,6 +798,37 @@ function isBarOpenTillLate(bar){
   const s=typeof oh==='string'?oh:JSON.stringify(oh);
   return /02:00|03:00/.test(s);
 }
+function getPopupHoursLine(bar){
+  const oh=bar.opening_hours;
+  if(!oh)return '';
+  const now=new Date();
+  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const today=dayNames[now.getDay()];
+  let todayHours='';
+  if(typeof oh==='object'){
+    const v=oh[today]||oh[today.toLowerCase().slice(0,3)];
+    todayHours=(v&&!/closed/i.test(v))?String(v).trim():'Closed';
+  }else if(typeof oh==='string'){
+    const m=oh.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+    todayHours=m?m[0]:'';
+  }
+  const openNow=isBarOpenNow(bar);
+  if(openNow===true&&todayHours)return 'Open until '+(todayHours.replace(/^\d{1,2}:\d{2}\s*-\s*/,''));
+  if(openNow===false&&todayHours)return todayHours==='Closed'?'Closed today':'Closes '+todayHours.replace(/^\d{1,2}:\d{2}\s*-\s*/,'');
+  return todayHours||'';
+}
+function getUpdatedAgo(bar){
+  const d=bar.last_updated;
+  if(!d)return '';
+  const then=new Date(d);
+  const now=new Date();
+  const days=Math.floor((now-then)/86400000);
+  if(days<1)return 'Updated today';
+  if(days===1)return 'Updated yesterday';
+  if(days<7)return 'Updated '+days+' days ago';
+  if(days<30)return 'Updated '+Math.floor(days/7)+' weeks ago';
+  return 'Updated '+then.toLocaleDateString('sv-SE');
+}
 
 function renderMarkers(bars, hoursFilter){
   markers.forEach(m=>map.removeLayer(m)); markers=[];
@@ -742,7 +848,11 @@ function renderMarkers(bars, hoursFilter){
     const iconHtml = `<div class="marker-pin${pinClass}"><div class="marker-icon" style="position:relative;background:${iconBg};border:2px solid ${iconBorder}">${isClosed?'🔒':'🍺'}${favBadge}</div><div class="marker-line"></div></div>`;
     const icon = L.divIcon({ html: iconHtml, className: '', iconSize: [36, 54], iconAnchor: [18, 54] });
     const barIdEscaped = (bar.id || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const popupHtml = `<div class="popup-name">${escapeHtml(bar.name)}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button type="button" class="popup-open" data-bar-id="${barIdEscaped}">See details →</button>`;
+    const placesKey = (typeof GOOGLE_PLACES_API_KEY === 'string' ? GOOGLE_PLACES_API_KEY : '').trim();
+    const photoHtml = (bar.photo_reference && placesKey) ? `<div class="popup-photo"><img src="https://maps.googleapis.com/maps/api/place/photo?maxwidth=80&photo_reference=${encodeURIComponent(bar.photo_reference)}&key=${encodeURIComponent(placesKey)}" alt="" /></div>` : '';
+    const hoursLine = getPopupHoursLine(bar);
+    const updatedLine = getUpdatedAgo(bar);
+    const popupHtml = `${photoHtml}<div class="popup-name">${escapeHtml(bar.name)}</div>${bar.price_found ? `<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>` : '<div class="popup-price-unknown">Price unknown</div>'}${hoursLine ? `<div class="popup-hours">${escapeHtml(hoursLine)}</div>` : ''}${updatedLine ? `<div class="popup-updated">${escapeHtml(updatedLine)}</div>` : ''}<button type="button" class="popup-open" data-bar-id="${barIdEscaped}">See details →</button>`;
 
     const marker = L.marker([bar.lat, bar.lng], { icon }).addTo(map);
     marker._bar = bar;
@@ -758,7 +868,9 @@ function renderMarkers(bars, hoursFilter){
       });
     }
     marker.bindPopup(popupEl, { closeButton: false, className: 'bar-popup' });
-    marker.on('click', () => { openSidebar(bar); });
+    marker.on('click', function() {
+      if (window.innerWidth > 768) openSidebar(bar);
+    });
     markers.push(marker);
   });
 }
@@ -874,6 +986,31 @@ window.openSidebar=function(bar){
   if (favBtn) { favBtn.classList.toggle('faved', getFavouriteIds().includes(bar.id)); favBtn.onclick = function(){ toggleFavourite(bar.id); favBtn.classList.toggle('faved', getFavouriteIds().includes(bar.id)); }; }
   var shareLink = document.getElementById('sb-share-link');
   if (shareLink) { var url = window.location.origin + window.location.pathname + '?bar=' + encodeURIComponent(bar.id); shareLink.href = url; shareLink.style.display = 'block'; shareLink.onclick = function(e){ e.preventDefault(); navigator.clipboard && navigator.clipboard.writeText(url); shareLink.textContent = '✓ Link copied!'; setTimeout(function(){ shareLink.innerHTML = '🔗 Copy link to bar'; }, 2000); }; }
+  var dirEl = document.getElementById('sb-directions');
+  if (dirEl && bar.address && bar.address !== 'Stockholm') {
+    var addr = encodeURIComponent(bar.address);
+    dirEl.innerHTML = '<a href="https://www.google.com/maps/dir/?api=1&destination=' + addr + '" target="_blank" rel="noopener">Google Maps</a><a href="https://maps.apple.com/?daddr=' + addr + '" target="_blank" rel="noopener">Apple Maps</a>';
+    dirEl.style.display = 'flex';
+  } else if (dirEl) dirEl.style.display = 'none';
+  var compareBtn = document.getElementById('sb-compare-btn');
+  if (compareBtn) {
+    compareBtn.style.display = 'block';
+    compareBtn.textContent = getCompareIds().includes(bar.id) ? '✓ In compare' : '⚖️ Add to compare';
+    compareBtn.onclick = function() {
+      addToCompare(bar.id);
+      compareBtn.textContent = '✓ In compare';
+      if (getCompareIds().length >= 2) openCompareModal();
+    };
+  }
+  var watchlistBtn = document.getElementById('sb-watchlist-btn');
+  if (watchlistBtn) {
+    var inWatch = getWatchlistIds().includes(bar.id);
+    watchlistBtn.textContent = inWatch ? '✓ In watchlist' : '📌 Add to watchlist';
+    watchlistBtn.onclick = function() {
+      toggleWatchlist(bar.id);
+      watchlistBtn.textContent = getWatchlistIds().includes(bar.id) ? '✓ In watchlist' : '📌 Add to watchlist';
+    };
+  }
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebar-backdrop').classList.add('visible');
   document.getElementById('sidebar-backdrop').setAttribute('aria-hidden','false');
@@ -909,6 +1046,56 @@ document.getElementById('sidebar-backdrop').addEventListener('click', closeSideb
   });
 })();
 
+(function(){
+  var listSheet=document.getElementById('bar-list-sheet');
+  var listToggle=document.getElementById('bar-list-toggle');
+  if(listToggle&&listSheet){
+    listToggle.addEventListener('click', function(){
+      if(listSheet.classList.contains('open')){
+        listSheet.classList.remove('open');
+        listSheet.addEventListener('transitionend', function onEnd(){ listSheet.removeEventListener('transitionend',onEnd); listSheet.classList.remove('visible'); }, { once: true });
+      }else{
+        listSheet.classList.add('visible');
+        requestAnimationFrame(function(){ listSheet.classList.add('open'); });
+      }
+    });
+  }
+})();
+
+(function(){
+  var saved=localStorage.getItem(THEME_STORAGE_KEY);
+  var preferLight=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches;
+  applyTheme(saved==='light'||(!saved&&preferLight));
+  document.getElementById('theme-toggle').addEventListener('click', function(){ applyTheme(!document.body.classList.contains('light-theme')); });
+})();
+
+document.getElementById('near-me-btn').addEventListener('click', function(){
+  if(!navigator.geolocation){ alert('Geolocation not supported'); return; }
+  this.disabled=true;
+  this.textContent='…';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat=pos.coords.latitude; var lng=pos.coords.longitude;
+    var R=6371;
+    function dist(b){ var dlat=(b.lat-lat)*Math.PI/180; var dlon=(b.lng-lng)*Math.PI/180; var a=Math.sin(dlat/2)*Math.sin(dlat/2)+Math.cos(lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dlon/2)*Math.sin(dlon/2); return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+    var withDist=allBars.filter(function(b){ return b.lat&&b.lng; }).map(function(b){ return { bar: b, d: dist(b) }; });
+    withDist.sort(function(a,b){ return a.d-b.d; });
+    nearMeIds=withDist.filter(function(x){ return x.d<=5; }).map(function(x){ return x.bar.id; });
+    if(nearMeIds.length===0) nearMeIds=withDist.slice(0,30).map(function(x){ return x.bar.id; });
+    map.setView([lat,lng],14);
+    applyFilters();
+    document.getElementById('near-me-btn').disabled=false;
+    document.getElementById('near-me-btn').textContent='📍 Near me';
+  }, function(){ document.getElementById('near-me-btn').disabled=false; document.getElementById('near-me-btn').textContent='📍 Near me'; alert('Could not get location'); });
+});
+
+document.getElementById('share-list-btn').addEventListener('click', function(){
+  var ids=visibleBarsForList.slice(0,50).map(function(b){ return b.id; });
+  if(ids.length===0){ alert('No bars to share'); return; }
+  var url=window.location.origin+window.location.pathname+'?bars='+ids.map(encodeURIComponent).join(',');
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url); this.textContent='✓ Copied!'; var t=this; setTimeout(function(){ t.textContent='Share list'; }, 2000); }
+  else { prompt('Copy this link:', url); }
+});
+
 document.addEventListener('click', function(e){
   const btn=e.target.closest('.popup-open[data-bar-id]');
   if(btn && typeof allBars!=='undefined'){
@@ -927,15 +1114,31 @@ function applyFilters(){
   const hoursVal=(hoursEl?.getAttribute('data-hours')||'').trim();
   const priceVal=parseInt(document.getElementById('price-filter')?.value,10)||150;
   let filtered=allBars;
+  if(nearMeIds&&nearMeIds.length) filtered=filtered.filter(b=>nearMeIds.includes(b.id));
   const hasAiSearch=aiFilterBarIds&&aiFilterBarIds.length>0;
   if(hasAiSearch){ filtered=filtered.filter(b=>aiFilterBarIds.includes(b.id)); }
   if(hoursVal==='favourites'){ var favIds=getFavouriteIds(); filtered=filtered.filter(b=>favIds.includes(b.id)); }
+  if(hoursVal==='watchlist'){ var watchIds=getWatchlistIds(); filtered=filtered.filter(b=>watchIds.includes(b.id)); }
   if(priceVal<150){
     filtered=filtered.filter(b=>!b.price_found||b.cheapest_beer_sek<=priceVal);
   }
+  visibleBarsForList=filtered.filter(b=>b.lat&&b.lng);
   renderMarkers(filtered, hoursVal);
   updateStats(filtered.filter(b=>b.price_found));
   document.getElementById('stat-bars').textContent=filtered.length;
+  if(typeof renderBarList==='function') renderBarList();
+}
+function renderBarList(){
+  const el=document.getElementById('bar-list-scroll');
+  if(!el) return;
+  el.innerHTML='';
+  visibleBarsForList.forEach(bar=>{
+    const row=document.createElement('div');
+    row.className='bar-list-item';
+    row.innerHTML=`<span class="name">${escapeHtml(bar.name)}</span><span class="price">${bar.price_found?bar.cheapest_beer_sek+' kr':'—'}</span>`;
+    row.addEventListener('click', ()=>{ openSidebar(bar); document.getElementById('bar-list-sheet').classList.remove('open'); });
+    el.appendChild(row);
+  });
 }
 document.querySelectorAll('.hours-pill').forEach(btn=>{
   btn.addEventListener('click', function(){
@@ -946,6 +1149,7 @@ document.querySelectorAll('.hours-pill').forEach(btn=>{
 });
 function clearAllFilters(){
   aiFilterBarIds=null;
+  nearMeIds=null;
   document.querySelectorAll('.hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
   var allPill=document.querySelector('.hours-pill[data-hours=""]');
   if(allPill){ allPill.classList.add('active'); allPill.setAttribute('aria-pressed','true'); }
@@ -972,6 +1176,32 @@ slider.addEventListener('input',()=>{
 
 window.openModal=function(){document.getElementById('modal-overlay').classList.add('open');}
 window.closeModal=function(){document.getElementById('modal-overlay').classList.remove('open');document.getElementById('modal-price').value='';document.getElementById('modal-beer').value='';}
+window.openCompareModal=function(){
+  var ids=getCompareIds();
+  var bars=ids.map(function(id){ return allBars.find(function(b){ return b.id===id; }); }).filter(Boolean);
+  var content=document.getElementById('compare-content');
+  if(!content||bars.length===0){ content.innerHTML='<p style="color:var(--muted);">Add 2+ bars from their details to compare.</p>'; }
+  else {
+    content.innerHTML='';
+    ['Name','Price','Hours'].forEach(function(label){
+      var row=document.createElement('div');
+      row.className='compare-row';
+      row.innerHTML='<span class="label">'+label+'</span>';
+      bars.forEach(function(bar){
+        var cell=document.createElement('span');
+        if(label==='Name') cell.textContent=bar.name;
+        else if(label==='Price') cell.textContent=bar.price_found?bar.cheapest_beer_sek+' kr':'—';
+        else if(label==='Hours') cell.textContent=getPopupHoursLine(bar)||'—';
+        row.appendChild(cell);
+      });
+      content.appendChild(row);
+    });
+  }
+  document.getElementById('compare-modal').classList.add('open');
+  document.getElementById('compare-modal').setAttribute('aria-hidden','false');
+}
+window.closeCompareModal=function(){ document.getElementById('compare-modal').classList.remove('open'); document.getElementById('compare-modal').setAttribute('aria-hidden','true'); }
+document.getElementById('compare-modal').addEventListener('click', function(e){ if(e.target===this) closeCompareModal(); });
 
 window.submitSuggestion=async function(){
   const price=parseInt(document.getElementById('modal-price').value);
@@ -1155,14 +1385,24 @@ async function sendChatMessage(){
 function initDeepLink(){
   var params = new URLSearchParams(window.location.search);
   var barId = params.get('bar');
+  var barsParam = params.get('bars');
+  if (barsParam && allBars && allBars.length) {
+    var ids = barsParam.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+    aiFilterBarIds = ids.length ? ids : null;
+    applyFilters();
+  }
   if (barId && allBars && allBars.length) {
     var bar = allBars.find(function(b){ return (b.id||'').toString() === barId; });
-    if (bar) { openSidebar(bar); if (bar.lat != null && bar.lng != null) map.setView([bar.lat, bar.lng], 15); history.replaceState({}, '', window.location.pathname + window.location.hash); }
+    if (bar) { openSidebar(bar); if (bar.lat != null && bar.lng != null) map.setView([bar.lat, bar.lng], 15); }
   }
+  history.replaceState({}, '', window.location.pathname + window.location.hash);
 }
 
 // ensure we initialize after defining functions
-loadBars().then(function(){ initDeepLink(); }).catch(function(){ initDeepLink(); });
+loadBars().then(function(){ initDeepLink(); renderBarList(); }).catch(function(){ initDeepLink(); });
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() { navigator.serviceWorker.register('sw.js').catch(function() {}); });
+}
 </script>
 
 </body>

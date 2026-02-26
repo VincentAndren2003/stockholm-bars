@@ -1,0 +1,10 @@
+{
+  "name": "Billigaste Ölen",
+  "short_name": "Billigaste Ölen",
+  "description": "Stockholm bar map — cheapest beer prices",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e0c09",
+  "theme_color": "#f5c542",
+  "orientation": "portrait-primary"
+}
