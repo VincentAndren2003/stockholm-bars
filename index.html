@@ -17,10 +17,16 @@
     .logo:hover h1,.logo:hover span{opacity:0.9;}
     .logo h1{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--gold);line-height:1;}
     .logo span{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-    .filter-bar{pointer-events:all;display:flex;align-items:center;gap:8px;background:rgba(26,23,16,0.92);border:1px solid rgba(245,197,66,0.2);border-radius:100px;padding:6px 8px;backdrop-filter:blur(12px);}
-    .filter-bar label{font-size:11px;color:var(--muted);padding:0 6px;white-space:nowrap;letter-spacing:0.5px;}
-    .filter-bar select{background:rgba(255,255,255,0.06);border:1px solid rgba(245,197,66,0.2);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;outline:none;}
-    .filter-bar select:focus{border-color:var(--gold);}
+    .filter-bar{pointer-events:all;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(26,23,16,0.92);border:1px solid rgba(245,197,66,0.15);border-radius:16px;padding:8px 12px;backdrop-filter:blur(12px);}
+    .filter-bar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-right:2px;}
+    .filter-vibes{display:flex;align-items:center;gap:4px;}
+    .filter-vibes .vibe-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .filter-vibes .vibe-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
+    .filter-vibes .vibe-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
+    .filter-hours{display:flex;align-items:center;gap:4px;}
+    .filter-hours .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .filter-hours .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
+    .filter-hours .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
     .filter-bar input[type="range"]{-webkit-appearance:none;width:120px;height:3px;background:linear-gradient(to right, var(--gold) 0%, var(--gold) 50%, rgba(255,255,255,0.1) 50%);border-radius:2px;outline:none;}
     .filter-bar input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
     #price-display{font-size:13px;font-weight:500;color:var(--gold);min-width:60px;}
@@ -83,6 +89,8 @@
     .marker-pin{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
     .marker-pin .marker-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,0.5);flex-shrink:0;}
     .marker-pin .marker-line{width:2px;height:18px;background:var(--gold);opacity:0.9;}
+    .marker-pin.closed .marker-icon{background:#3a3530 !important;border-color:#4a4540 !important;opacity:0.85;}
+    .marker-pin.closed .marker-line{background:var(--muted);opacity:0.6;}
   </style>
 </head>
 <body>
@@ -99,14 +107,18 @@
     <span>Stockholm Beer Prices</span>
   </a>
   <div class="filter-bar">
-    <label>Vibe</label>
-    <select id="vibe-filter" aria-label="Filter by vibe">
-      <option value="">All vibes</option>
-      <option value="dating">Dating</option>
-      <option value="chill">Chill</option>
-      <option value="girls-night">Girls / guys night</option>
-      <option value="party">Party</option>
-    </select>
+    <span class="filter-vibes" role="group" aria-label="Vibe">
+      <button type="button" class="vibe-pill active" data-vibe="">All</button>
+      <button type="button" class="vibe-pill" data-vibe="dating">Dating</button>
+      <button type="button" class="vibe-pill" data-vibe="chill">Chill</button>
+      <button type="button" class="vibe-pill" data-vibe="girls-night">Girls night</button>
+      <button type="button" class="vibe-pill" data-vibe="party">Party</button>
+    </span>
+    <span class="filter-hours" role="group" aria-label="Opening">
+      <button type="button" class="hours-pill active" data-hours="">All</button>
+      <button type="button" class="hours-pill" data-hours="open_now">Open now</button>
+      <button type="button" class="hours-pill" data-hours="open_late">Open till late</button>
+    </span>
     <label>Max price</label>
     <input type="range" id="price-filter" min="40" max="150" value="150" step="5"/>
     <span id="price-display">All prices</span>
@@ -518,14 +530,51 @@ async function loadBars(){
 
 function hideLoading(){const el=document.getElementById('loading');el.style.opacity='0';setTimeout(()=>el.style.display='none',500);}
 function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function isBarOpenNow(bar){
+  const oh=bar.opening_hours;
+  if(!oh)return null;
+  const now=new Date();
+  const day=now.getDay();
+  const mins=now.getHours()*60+now.getMinutes();
+  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const today=dayNames[day];
+  let ranges=[];
+  if(typeof oh==='object'){
+    const v=oh[today]||oh[today.toLowerCase().slice(0,3)];
+    if(!v||v==='Closed'||/closed/i.test(v))return false;
+    const pair=v.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+    if(pair){ ranges=[{ open: parseInt(pair[1],10)*60+parseInt(pair[2],10), close: parseInt(pair[3],10)*60+parseInt(pair[4],10) }]; }
+  }
+  if(ranges.length===0&&typeof oh==='string'){
+    const late=/-\s*0?([23]):00|-\s*01:00/g;
+    const pairs=oh.matchAll(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g);
+    for(const p of pairs){ ranges.push({ open: parseInt(p[1],10)*60+parseInt(p[2],10), close: parseInt(p[3],10)*60+parseInt(p[4],10) }); }
+  }
+  if(ranges.length===0)return null;
+  for(const r of ranges){
+    const openM=r.open, closeM=r.close;
+    const openNow=closeM>openM ? (mins>=openM&&mins<closeM) : (mins>=openM||mins<closeM);
+    if(openNow)return true;
+  }
+  return false;
+}
+function isBarOpenTillLate(bar){
+  const oh=bar.opening_hours;
+  if(!oh)return false;
+  const s=typeof oh==='string'?oh:JSON.stringify(oh);
+  return /02:00|03:00/.test(s);
+}
 
-function renderMarkers(bars){
+function renderMarkers(bars, hoursFilter){
   markers.forEach(m=>map.removeLayer(m)); markers=[];
+  const showOpenNowClosed = hoursFilter==='open_now';
   bars.forEach(bar=>{
     if(!bar.lat||!bar.lng)return;
-    const iconBg = bar.price_found ? '#f5c542' : '#3a3530';
-    const iconBorder = bar.price_found ? '#e08c00' : '#5a5040';
-    const iconHtml = `<div class="marker-pin"><div class="marker-icon" style="background:${iconBg};border:2px solid ${iconBorder}">🍺</div><div class="marker-line"></div></div>`;
+    const isClosed = showOpenNowClosed && isBarOpenNow(bar)===false;
+    const iconBg = isClosed ? '#3a3530' : (bar.price_found ? '#f5c542' : '#3a3530');
+    const iconBorder = isClosed ? '#4a4540' : (bar.price_found ? '#e08c00' : '#5a5040');
+    const pinClass = isClosed ? ' closed' : '';
+    const iconHtml = `<div class="marker-pin${pinClass}"><div class="marker-icon" style="background:${iconBg};border:2px solid ${iconBorder}">${isClosed?'🔒':'🍺'}</div><div class="marker-line"></div></div>`;
     const icon = L.divIcon({ html: iconHtml, className: '', iconSize: [36, 54], iconAnchor: [18, 54] });
     const barIdEscaped = (bar.id || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const popupHtml = `<div class="popup-name">${escapeHtml(bar.name)}</div>${bar.price_found?`<div class="popup-price">${bar.cheapest_beer_sek} kr <span>/ beer</span></div>`:`<div style="font-size:12px;color:#7a7060;margin-top:4px;">Price unknown</div>`}<button type="button" class="popup-open" data-bar-id="${barIdEscaped}">See details →</button>`;
@@ -637,19 +686,31 @@ document.addEventListener('click', function(e){
 }, true);
 
 function applyFilters(){
-  const vibeVal=(document.getElementById('vibe-filter')?.value||'').trim().toLowerCase();
+  const vibeEl=document.querySelector('.vibe-pill.active');
+  const hoursEl=document.querySelector('.hours-pill.active');
+  const vibeVal=(vibeEl?.getAttribute('data-vibe')||'').trim().toLowerCase();
+  const hoursVal=(hoursEl?.getAttribute('data-hours')||'').trim();
   const priceVal=parseInt(document.getElementById('price-filter')?.value,10)||150;
   let filtered=allBars;
   if(vibeVal){
     filtered=filtered.filter(b=>b.vibes&&b.vibes.length&&b.vibes.includes(vibeVal));
   }
+  if(hoursVal==='open_late'){
+    filtered=filtered.filter(b=>isBarOpenTillLate(b));
+  }
   if(priceVal<150){
     filtered=filtered.filter(b=>!b.price_found||b.cheapest_beer_sek<=priceVal);
   }
-  renderMarkers(filtered);
+  renderMarkers(filtered, hoursVal);
   updateStats(filtered.filter(b=>b.price_found));
   document.getElementById('stat-bars').textContent=filtered.length;
 }
+document.querySelectorAll('.vibe-pill').forEach(btn=>{
+  btn.addEventListener('click', function(){ document.querySelectorAll('.vibe-pill').forEach(b=>b.classList.remove('active')); this.classList.add('active'); applyFilters(); });
+});
+document.querySelectorAll('.hours-pill').forEach(btn=>{
+  btn.addEventListener('click', function(){ document.querySelectorAll('.hours-pill').forEach(b=>b.classList.remove('active')); this.classList.add('active'); applyFilters(); });
+});
 const slider=document.getElementById('price-filter'); const display=document.getElementById('price-display');
 slider.addEventListener('input',()=>{
   const val=parseInt(slider.value);
@@ -658,7 +719,6 @@ slider.addEventListener('input',()=>{
   slider.style.background=`linear-gradient(to right, #f5c542 0%, #f5c542 ${pct}%, rgba(255,255,255,0.1) ${pct}%)`;
   applyFilters();
 });
-document.getElementById('vibe-filter')?.addEventListener('change', applyFilters);
 
 window.openModal=function(){document.getElementById('modal-overlay').classList.add('open');}
 window.closeModal=function(){document.getElementById('modal-overlay').classList.remove('open');document.getElementById('modal-price').value='';document.getElementById('modal-beer').value='';}
