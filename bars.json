@@ -17,7 +17,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Långholmsgatan 42, 117 33 Stockholm, Sverige"
+    "correct_address": "Långholmsgatan 42, 117 33 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "amici-nostri",
@@ -37,7 +42,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Ringvägen 104, 116 61 Stockholm, Sverige"
+    "correct_address": "Ringvägen 104, 116 61 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "babel-bazaar",
@@ -60,7 +70,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Långholmsgatan 27, 117 33 Stockholm, Sverige"
+    "correct_address": "Långholmsgatan 27, 117 33 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "party_night"
+    ]
   },
   {
     "id": "balthazar",
@@ -80,7 +94,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Högbergsgatan 33, 116 20 Stockholm, Sverige"
+    "correct_address": "Högbergsgatan 33, 116 20 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "bar-agrikultur",
@@ -101,7 +119,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Skånegatan 79, 116 35 Stockholm, Sverige"
+    "correct_address": "Skånegatan 79, 116 35 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "bar-kaja",
@@ -122,7 +145,13 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Repslagargatan 8, 118 46 Stockholm, Sverige"
+    "correct_address": "Repslagargatan 8, 118 46 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "bar-klow",
@@ -143,7 +172,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Ringvägen 145, 116 61 Stockholm, Sverige"
+    "correct_address": "Ringvägen 145, 116 61 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "bar-lilla-compagniet",
@@ -164,7 +198,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Katarinavägen 18, 116 45 Stockholm, Sverige"
+    "correct_address": "Katarinavägen 18, 116 45 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "chill_hangout"
+    ]
   },
   {
     "id": "bara-2.noll",
@@ -184,7 +223,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 103, 116 62 Stockholm, Sverige"
+    "correct_address": "Götgatan 103, 116 62 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "bara-enkelt",
@@ -204,7 +248,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Skånegatan 59, 116 37 Stockholm, Sverige"
+    "correct_address": "Skånegatan 59, 116 37 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "baras-backe",
@@ -224,7 +272,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 33, 116 20 Stockholm, Sverige"
+    "correct_address": "Götgatan 33, 116 20 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "baras-gemenskap",
@@ -245,7 +297,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Sankt Paulsgatan 2, 118 46 Stockholm, Sverige"
+    "correct_address": "Sankt Paulsgatan 2, 118 46 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "beer-n'play-hornstull",
@@ -265,7 +322,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 138, 117 28 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 138, 117 28 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "big-ben-pub",
@@ -285,7 +347,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Folkungagatan 97, 116 30 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 97, 116 30 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "bistro-bananas",
@@ -306,7 +372,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Skånegatan 47, 116 37 Stockholm, Sverige"
+    "correct_address": "Skånegatan 47, 116 37 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "bistro-barbro",
@@ -327,7 +398,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornstulls strand 13, 117 39 Stockholm, Sverige"
+    "correct_address": "Hornstulls strand 13, 117 39 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "chill_hangout"
+    ]
   },
   {
     "id": "bistroteket",
@@ -347,7 +423,13 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Bondegatan 54, 116 33 Stockholm, Sverige"
+    "correct_address": "Bondegatan 54, 116 33 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "black-&-brown-inn",
@@ -368,7 +450,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornsgatan 50B, 118 21 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 50B, 118 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "chill_date"
+    ]
   },
   {
     "id": "bleck",
@@ -388,7 +475,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Katarina Bangata 68, 116 42 Stockholm, Sverige"
+    "correct_address": "Katarina Bangata 68, 116 42 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "chill_date"
+    ]
   },
   {
     "id": "blecktornskällaren",
@@ -408,7 +499,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Ringvägen 147, 116 61 Stockholm, Sverige"
+    "correct_address": "Ringvägen 147, 116 61 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "brewdog-bar",
@@ -429,7 +524,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Ringvägen 149B, 116 31 Stockholm, Sverige"
+    "correct_address": "Ringvägen 149B, 116 31 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "carmen",
@@ -450,7 +550,12 @@
       "party",
       "girls-night"
     ],
-    "correct_address": "Tjärhovsgatan 14, 116 21 Stockholm, Sverige"
+    "correct_address": "Tjärhovsgatan 14, 116 21 Stockholm, Sverige",
+    "moods": [
+      "party_night",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "charles-dickens",
@@ -470,7 +575,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Folkungagatan 55, 116 22 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 55, 116 22 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "city-biljard-skanstull",
@@ -490,7 +599,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 101, 116 62 Stockholm, Sverige"
+    "correct_address": "Götgatan 101, 116 62 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "continental-bar-nytorget",
@@ -510,7 +624,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Nytorgsgatan 33, 116 40 Stockholm, Sverige"
+    "correct_address": "Nytorgsgatan 33, 116 40 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "cornostrada",
@@ -530,7 +648,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan, 118 49 Stockholm, Sverige"
+    "correct_address": "Hornsgatan, 118 49 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "crazy-horse",
@@ -551,7 +674,12 @@
       "party",
       "girls-night"
     ],
-    "correct_address": "Götgatan 44, 118 26 Stockholm, Sverige"
+    "correct_address": "Götgatan 44, 118 26 Stockholm, Sverige",
+    "moods": [
+      "party_night",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "crispy-pizza-bistro",
@@ -572,7 +700,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Ringvägen 129, 116 61 Stockholm, Sverige"
+    "correct_address": "Ringvägen 129, 116 61 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "den-gröne-jägaren",
@@ -592,7 +724,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 64, 118 26 Stockholm, Sverige"
+    "correct_address": "Götgatan 64, 118 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "dovas-hornstull",
@@ -613,7 +750,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Långholmsgatan 12, 117 33 Stockholm, Sverige"
+    "correct_address": "Långholmsgatan 12, 117 33 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "dovas-mariatorget",
@@ -633,7 +775,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 90, 118 21 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 90, 118 21 Stockholm, Sverige",
+    "moods": [
+      "cheap_night_out",
+      "chill_hangout"
+    ]
   },
   {
     "id": "elefantpojken",
@@ -654,7 +800,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Ringvägen 151, 116 31 Stockholm, Sverige"
+    "correct_address": "Ringvägen 151, 116 31 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "emanuel-bistro",
@@ -674,7 +824,13 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 41, 118 49 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 41, 118 49 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "fotöljen-slussen",
@@ -694,7 +850,13 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 14, 118 46 Stockholm, Sverige"
+    "correct_address": "Götgatan 14, 118 46 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "german-beer-hall-zinken",
@@ -714,7 +876,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 104, 117 26 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 104, 117 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "haket",
@@ -735,7 +902,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Folkungagatan 69, 116 22 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 69, 116 22 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "häktet",
@@ -755,7 +926,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 82, 118 21 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 82, 118 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "half-way-inn",
@@ -775,7 +950,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Swedenborgsgatan 6, 118 50 Stockholm, Sverige"
+    "correct_address": "Swedenborgsgatan 6, 118 50 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "hallen-södermalm",
@@ -796,7 +976,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Götgatan 85A, 116 62 Stockholm, Sverige"
+    "correct_address": "Götgatan 85A, 116 62 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "harvest-home",
@@ -817,7 +1002,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Bondegatan 50, 116 33 Stockholm, Sverige"
+    "correct_address": "Bondegatan 50, 116 33 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "himlen",
@@ -837,7 +1027,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 78, 118 30 Stockholm, Sverige"
+    "correct_address": "Götgatan 78, 118 30 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "hirschenkeller",
@@ -857,7 +1052,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 46, 118 26 Stockholm, Sverige"
+    "correct_address": "Götgatan 46, 118 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "hirschenkeller-götgatan",
@@ -877,7 +1077,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 46, 118 26 Stockholm, Sverige"
+    "correct_address": "Götgatan 46, 118 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "holidays-götgatan",
@@ -898,7 +1103,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Götgatan 67, 116 21 Stockholm, Sverige"
+    "correct_address": "Götgatan 67, 116 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "holly-bush",
@@ -919,7 +1128,13 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Götgatan 82, 118 62 Stockholm, Sverige"
+    "correct_address": "Götgatan 82, 118 62 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "hornhuset",
@@ -939,7 +1154,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Långholmsgatan 15b, 117 33 Stockholm, Sverige"
+    "correct_address": "Långholmsgatan 15b, 117 33 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "horntulls-bodega",
@@ -960,7 +1180,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornsbruksgatan 24, 117 34 Stockholm, Sverige"
+    "correct_address": "Hornsbruksgatan 24, 117 34 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout"
+    ]
   },
   {
     "id": "il-tempo",
@@ -981,7 +1205,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Högbergsgatan 40, 118 26 Stockholm, Sverige"
+    "correct_address": "Högbergsgatan 40, 118 26 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "chill_hangout"
+    ]
   },
   {
     "id": "kajsas-i-parken",
@@ -1002,7 +1231,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Stora Mejtens Gränd 16, 116 35 Stockholm, Sverige"
+    "correct_address": "Stora Mejtens Gränd 16, 116 35 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "kajsas-i-tullen",
@@ -1023,7 +1257,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Bergsunds strand, 117 39 Stockholm, Sverige"
+    "correct_address": "Bergsunds strand, 117 39 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "kellys",
@@ -1043,7 +1281,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Folkungagatan 49, 116 22 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 49, 116 22 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "kloster",
@@ -1063,7 +1306,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 84, 118 21 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 84, 118 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "krogen-soldaten-svejk",
@@ -1084,7 +1331,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Östgötagatan 35, 116 25 Stockholm, Sverige"
+    "correct_address": "Östgötagatan 35, 116 25 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "krukan",
@@ -1104,7 +1356,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Rosenlundsgatan 16, 118 53 Stockholm, Sverige"
+    "correct_address": "Rosenlundsgatan 16, 118 53 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "kvarnen",
@@ -1125,7 +1382,13 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Tjärhovsgatan 4, 116 21 Stockholm, Sverige"
+    "correct_address": "Tjärhovsgatan 4, 116 21 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "la-cucaracha",
@@ -1145,7 +1408,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Bondegatan 2, 116 23 Stockholm, Sverige"
+    "correct_address": "Bondegatan 2, 116 23 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "lion-bar-folkungagatan",
@@ -1166,7 +1434,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Folkungagatan 83, 116 22 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 83, 116 22 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "lion-bar-hornstull",
@@ -1186,7 +1459,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 154, 117 28 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 154, 117 28 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "lion-bar-mariatorget",
@@ -1207,7 +1484,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornsgatan 55, 118 49 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 55, 118 49 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "loch-ness",
@@ -1228,7 +1509,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Wollmar Yxkullsgatan 5, 118 50 Stockholm, Sverige"
+    "correct_address": "Wollmar Yxkullsgatan 5, 118 50 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "lykke",
@@ -1249,7 +1534,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Nytorgsgatan 38, 116 40 Stockholm, Sverige"
+    "correct_address": "Nytorgsgatan 38, 116 40 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout"
+    ]
   },
   {
     "id": "mästers",
@@ -1270,7 +1559,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Götgatan 27, 116 21 Stockholm, Sverige"
+    "correct_address": "Götgatan 27, 116 21 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "medis-kök-och-bar",
@@ -1290,7 +1584,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Medborgarplatsen 29, 118 26 Stockholm, Sverige"
+    "correct_address": "Medborgarplatsen 29, 118 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "mikkeller-stockholm",
@@ -1311,7 +1609,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Östgötagatan 33, 116 25 Stockholm, Sverige"
+    "correct_address": "Östgötagatan 33, 116 25 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "chill_date",
+      "group_friends"
+    ]
   },
   {
     "id": "mister-plankstek",
@@ -1332,7 +1635,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Folkungagatan 102, 116 30 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 102, 116 30 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "morfar-ginko",
@@ -1352,7 +1660,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Swedenborgsgatan 13, 118 48 Stockholm, Sverige"
+    "correct_address": "Swedenborgsgatan 13, 118 48 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "no-name-bar",
@@ -1372,7 +1685,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Åsögatan 110, 116 24 Stockholm, Sverige"
+    "correct_address": "Åsögatan 110, 116 24 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "old-beefeater-inn",
@@ -1392,7 +1710,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 11, 116 46 Stockholm, Sverige"
+    "correct_address": "Götgatan 11, 116 46 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "oliver-twist",
@@ -1413,7 +1736,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Repslagargatan 6, 118 46 Stockholm, Sverige"
+    "correct_address": "Repslagargatan 6, 118 46 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "ölstugan-tullen-hornstull",
@@ -1434,7 +1762,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornsgatan 143, 117 28 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 143, 117 28 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "omnipollos-hatt",
@@ -1455,7 +1788,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hökens gata 1A, 116 46 Stockholm, Sverige"
+    "correct_address": "Hökens gata 1A, 116 46 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "östgötakällaren",
@@ -1476,7 +1814,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Östgötagatan 41, 116 25 Stockholm, Sverige"
+    "correct_address": "Östgötagatan 41, 116 25 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "parken-söder",
@@ -1496,7 +1839,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Fatbursgatan 1, 118 28 Stockholm, Sverige"
+    "correct_address": "Fatbursgatan 1, 118 28 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "pinocchio-kök-och-bar",
@@ -1516,7 +1864,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Östgötagatan 32, 116 25 Stockholm, Sverige"
+    "correct_address": "Östgötagatan 32, 116 25 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out",
+      "group_friends"
+    ]
   },
   {
     "id": "pitcher's-mariatorget",
@@ -1536,7 +1889,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Mariatorget 1A, 118 48 Stockholm, Sverige"
+    "correct_address": "Mariatorget 1A, 118 48 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "chill_date",
+      "group_friends"
+    ]
   },
   {
     "id": "polhem-söder",
@@ -1557,7 +1915,11 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Ringvägen 153, 116 31 Stockholm, Sverige"
+    "correct_address": "Ringvägen 153, 116 31 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "post-bar",
@@ -1577,7 +1939,13 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Nytorget 4, 116 40 Stockholm, Sverige"
+    "correct_address": "Nytorget 4, 116 40 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "racamaca",
@@ -1598,7 +1966,13 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Wollmar Yxkullsgatan 5B, 118 50 Stockholm, Sverige"
+    "correct_address": "Wollmar Yxkullsgatan 5B, 118 50 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "restaurang-nytorget-6",
@@ -1619,7 +1993,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Nytorget 6, 114 56 Stockholm, Sverige"
+    "correct_address": "Nytorget 6, 114 56 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "retro-bar-hornsgatan",
@@ -1640,7 +2019,12 @@
       "party",
       "girls-night"
     ],
-    "correct_address": "Hornsgatan 136, 117 28 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 136, 117 28 Stockholm, Sverige",
+    "moods": [
+      "party_night",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "retro-bar-nytorget",
@@ -1660,7 +2044,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Bondegatan 25, 116 33 Stockholm, Sverige"
+    "correct_address": "Bondegatan 25, 116 33 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "rock-and-bowl",
@@ -1680,7 +2069,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 54, 118 21 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 54, 118 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "snaps",
@@ -1700,7 +2094,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 48, 118 26 Stockholm, Sverige"
+    "correct_address": "Götgatan 48, 118 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "snövit-bar",
@@ -1721,7 +2119,13 @@
       "party",
       "girls-night"
     ],
-    "correct_address": "Ringvägen 147, 116 61 Stockholm, Sverige"
+    "correct_address": "Ringvägen 147, 116 61 Stockholm, Sverige",
+    "moods": [
+      "party_night",
+      "group_friends",
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "söder-bar",
@@ -1741,7 +2145,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Ringvägen 125, 116 61 Stockholm, Sverige"
+    "correct_address": "Ringvägen 125, 116 61 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "söderhallen-biljard",
@@ -1761,7 +2170,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 61, 118 49 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 61, 118 49 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "söderkällaren",
@@ -1781,7 +2195,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Tjärhovsgatan 12, 116 21 Stockholm, Sverige"
+    "correct_address": "Tjärhovsgatan 12, 116 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "södra-sidan-pub",
@@ -1801,7 +2219,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Folkungagatan 57, 116 22 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 57, 116 22 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "spago",
@@ -1822,7 +2244,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Götgatan 24, 118 46 Stockholm, Sverige"
+    "correct_address": "Götgatan 24, 118 46 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "third_date"
+    ]
   },
   {
     "id": "stockholm-ost-&-chark",
@@ -1843,7 +2270,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Renstiernas gata 27, 116 31 Stockholm, Sverige"
+    "correct_address": "Renstiernas gata 27, 116 31 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "stuket-resturang",
@@ -1864,7 +2296,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Swedenborgsgatan 43, 118 27 Stockholm, Sverige"
+    "correct_address": "Swedenborgsgatan 43, 118 27 Stockholm, Sverige",
+    "moods": [
+      "first_date",
+      "chill_date",
+      "chill_hangout"
+    ]
   },
   {
     "id": "svea-la-regina",
@@ -1884,7 +2321,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Ringvägen 153, 116 31 Stockholm, Sverige"
+    "correct_address": "Ringvägen 153, 116 31 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "the-central-bar-folkungagatan",
@@ -1904,7 +2345,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Folkungagatan 57-59, 116 22 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 57-59, 116 22 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "the-central-bar-götgatan",
@@ -1924,7 +2369,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Götgatan 84, 118 62 Stockholm, Sverige"
+    "correct_address": "Götgatan 84, 118 62 Stockholm, Sverige",
+    "moods": [
+      "cheap_night_out",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "tiffany's",
@@ -1945,7 +2395,13 @@
       "party",
       "girls-night"
     ],
-    "correct_address": "Götgatan 27, 116 21 Stockholm, Sverige"
+    "correct_address": "Götgatan 27, 116 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "party_night",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "timebar",
@@ -1965,7 +2421,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 174, 117 34 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 174, 117 34 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "tjoget",
@@ -1986,7 +2447,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornsbruksgatan 24, 117 34 Stockholm, Sverige"
+    "correct_address": "Hornsbruksgatan 24, 117 34 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends"
+    ]
   },
   {
     "id": "troll-hornsgatan",
@@ -2007,7 +2473,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Hornsgatan 66b, 118 21 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 66b, 118 21 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "urban-deli-nytorget",
@@ -2027,7 +2498,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Nytorget 4, 116 40 Stockholm, Sverige"
+    "correct_address": "Nytorget 4, 116 40 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "chill_date"
+    ]
   },
   {
     "id": "viking-bar",
@@ -2047,7 +2523,12 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Hornsgatan 35 - 37, 118 49 Stockholm, Sverige"
+    "correct_address": "Hornsgatan 35 - 37, 118 49 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "voodoo-room",
@@ -2070,7 +2551,12 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Folkungagatan 84, 116 23 Stockholm, Sverige"
+    "correct_address": "Folkungagatan 84, 116 23 Stockholm, Sverige",
+    "moods": [
+      "party_night",
+      "group_friends",
+      "chill_hangout"
+    ]
   },
   {
     "id": "wollmar",
@@ -2090,7 +2576,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Wollmar Yxkullsgatan 12, 118 50 Stockholm, Sverige"
+    "correct_address": "Wollmar Yxkullsgatan 12, 118 50 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "ylias",
@@ -2111,7 +2601,13 @@
       "dating",
       "chill"
     ],
-    "correct_address": "Noe Arksgränden 6, Repslagargatan 27, 118 26 Stockholm, Sverige"
+    "correct_address": "Noe Arksgränden 6, Repslagargatan 27, 118 26 Stockholm, Sverige",
+    "moods": [
+      "chill_date",
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   },
   {
     "id": "zinkens-krog",
@@ -2131,6 +2627,11 @@
     "vibes": [
       "chill"
     ],
-    "correct_address": "Ringvägen 14, 117 26 Stockholm, Sverige"
+    "correct_address": "Ringvägen 14, 117 26 Stockholm, Sverige",
+    "moods": [
+      "chill_hangout",
+      "group_friends",
+      "cheap_night_out"
+    ]
   }
 ]

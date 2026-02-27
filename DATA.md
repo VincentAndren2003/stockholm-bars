@@ -1,8 +1,32 @@
 # Bar data and enrichment
 
-The app uses **bars.json** for bar list, prices, opening hours, vibes, and (optionally) ratings and reviews.
+The app uses **bars.json** for bar list, prices, opening hours, vibes, **moods** (LLM categories), and (optionally) ratings and reviews.
 
-## Adding more information (ratings, reviews, mood)
+## Categorising bars by mood (first date, third date, chill date, etc.)
+
+To assign each bar to moods like **First date**, **Third date**, **Chill date**, **Party night**, **Chill hangout**, **Group**, **Cheap night out** using reviews and an LLM:
+
+```bash
+# Requires in .env: GOOGLE_PLACES_API_KEY, OPENAI_API_KEY
+node scripts/categorize-bars-by-mood.js bars.json
+```
+
+The script:
+
+1. Fetches **review snippets** from Google Place Details for each bar (if it has `place_id`).
+2. Sends bar name, price, rating, dance_floor, vibes, and review text to **OpenAI** (gpt-4o-mini).
+3. Writes a **`moods`** array on each bar in **bars.json** (e.g. `["first_date","chill_date"]`).
+
+**You need:**
+
+- **GOOGLE_PLACES_API_KEY** – same as for rating enrichment (Place Details with `reviews` field).
+- **OPENAI_API_KEY** – from [OpenAI API keys](https://platform.openai.com/api-keys) (used for bar-chat too).
+
+After running, the app’s mood filters (First date, Third date, Chill date, etc.) will use these categories.
+
+---
+
+## Adding more information (ratings, reviews, vibes)
 
 ### Option 1: Google Places API (recommended)
 

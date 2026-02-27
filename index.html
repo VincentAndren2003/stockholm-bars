@@ -224,10 +224,12 @@
     <div class="filter-bar-content" id="filter-bar-content" role="region" aria-label="Filters">
       <span class="filter-mood" role="group" aria-label="Mood filter">
         <button type="button" class="hours-pill" data-mood="" aria-pressed="true">All</button>
-        <button type="button" class="hours-pill" data-mood="chill" aria-pressed="false">Chill</button>
-        <button type="button" class="hours-pill" data-mood="party" aria-pressed="false">Party</button>
-        <button type="button" class="hours-pill" data-mood="dance" aria-pressed="false">Dance</button>
-        <button type="button" class="hours-pill" data-mood="dating" aria-pressed="false">Date</button>
+        <button type="button" class="hours-pill" data-mood="first_date" aria-pressed="false">First date</button>
+        <button type="button" class="hours-pill" data-mood="third_date" aria-pressed="false">Third date</button>
+        <button type="button" class="hours-pill" data-mood="chill_date" aria-pressed="false">Chill date</button>
+        <button type="button" class="hours-pill" data-mood="party_night" aria-pressed="false">Party night</button>
+        <button type="button" class="hours-pill" data-mood="chill_hangout" aria-pressed="false">Chill hangout</button>
+        <button type="button" class="hours-pill" data-mood="group_friends" aria-pressed="false">Group</button>
         <button type="button" class="hours-pill" data-mood="cheap" aria-pressed="false">Cheap</button>
         <button type="button" class="hours-pill" data-mood="top_rated" aria-pressed="false">Top rated</button>
       </span>
@@ -549,7 +551,8 @@ function normalizeBarFromRow(row) {
     photo_reference: getBarField(row, 'photo_reference', 'photoReference') || null,
     place_id: getBarField(row, 'place_id', 'placeId') || null,
     rating: (function(){ var r=getBarField(row,'rating','place_rating'); return r!=null&&r!==''?Number(r):null; })(),
-    review_count: (function(){ var r=getBarField(row,'review_count','user_ratings_total','reviews'); return r!=null&&r!==''?Number(r):null; })()
+    review_count: (function(){ var r=getBarField(row,'review_count','user_ratings_total','reviews'); return r!=null&&r!==''?Number(r):null; })(),
+    moods: (function(){ var m=getBarField(row,'moods'); if(Array.isArray(m)) return m; if(typeof m==='string') return m.split(/[,;]/).map(function(x){ return x.trim().toLowerCase(); }).filter(Boolean); return []; })()
   };
 }
 function normalizeVibes(v){
@@ -566,6 +569,9 @@ function getBarMoodTags(bar){
 function barMatchesMood(bar,mood){
   if(!mood)return true;
   if(mood==='top_rated') return bar.rating!=null&&bar.rating>=4;
+  var llmMoods=bar.moods||[];
+  if(llmMoods.length&&['first_date','third_date','chill_date','party_night','chill_hangout','group_friends','cheap_night_out'].indexOf(mood)>=0)
+    return llmMoods.indexOf(mood)>=0;
   var tags=getBarMoodTags(bar);
   if(mood==='cheap') return bar.price_found&&bar.cheapest_beer_sek<=50;
   if(mood==='dance') return bar.dance_floor==='yes'||tags.includes('dance')||tags.includes('party')||(bar.dance_notes&&/danc|party/i.test(bar.dance_notes));
