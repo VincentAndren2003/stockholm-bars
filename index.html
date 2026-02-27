@@ -14,23 +14,17 @@
     :root { --gold:#f5c542;--amber:#e08c00;--dark:#0e0c09;--dark2:#1a1710;--card:#201e19;--text:#f0ead8;--muted:#7a7060;--green:#5ecb7a;--fav:#e85d7a;--fav-bg:rgba(232,93,122,0.2); }
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);height:100vh;overflow:hidden;}
-    header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,12,9,0.97);pointer-events:none;box-shadow:0 1px 0 rgba(255,255,255,0.05);}
-    .logo{pointer-events:all;display:flex;align-items:baseline;gap:8px;text-decoration:none;color:inherit;cursor:pointer;}
+    header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(14,12,9,0.97);pointer-events:none;box-shadow:0 1px 0 rgba(255,255,255,0.05);}
+    .logo{pointer-events:all;display:flex;align-items:baseline;gap:6px;text-decoration:none;color:inherit;cursor:pointer;}
     .logo:hover h1,.logo:hover span{opacity:0.9;}
-    .logo h1{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--gold);line-height:1;}
-    .logo span{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-    .filter-bar{pointer-events:all;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(26,23,16,0.92);border:1px solid rgba(245,197,66,0.15);border-radius:16px;padding:8px 12px;backdrop-filter:blur(12px);}
-    .filter-bar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-right:2px;}
-    .filter-bar .header-search-wrap{display:flex;align-items:center;gap:6px;}
-    .filter-bar .header-search-wrap input{width:200px;min-width:140px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;}
-    .filter-bar .header-search-wrap input:focus{border-color:rgba(245,197,66,0.5);}
-    .filter-bar .header-search-wrap input::placeholder{color:var(--muted);}
-    .filter-bar .header-search-wrap button{padding:6px 12px;background:var(--gold);color:var(--dark);border:none;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-    .filter-bar .header-search-wrap button:hover{background:#ffd666;}
-    .filter-hours{display:flex;align-items:center;gap:4px;}
-    .filter-hours .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
-    .filter-hours .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
-    .filter-hours .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
+    .logo h1{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--gold);line-height:1;}
+    .logo span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+    .filter-bar{pointer-events:all;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(26,23,16,0.92);border:1px solid rgba(245,197,66,0.12);border-radius:12px;padding:6px 10px;backdrop-filter:blur(12px);}
+    .filter-bar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;}
+    .filter-hours,.filter-mood{display:flex;align-items:center;gap:4px;}
+    .filter-hours .hours-pill,.filter-mood .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .filter-hours .hours-pill:hover,.filter-mood .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
+    .filter-hours .hours-pill.active,.filter-mood .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
     .filter-bar input[type="range"]{appearance:none;-webkit-appearance:none;width:120px;height:3px;background:linear-gradient(to right, var(--gold) 0%, var(--gold) 50%, rgba(255,255,255,0.1) 50%);border-radius:2px;outline:none;}
     .filter-bar input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
     #price-display{font-size:13px;font-weight:500;color:var(--gold);min-width:60px;}
@@ -84,9 +78,7 @@
       .filter-bar.open .filter-bar-content{display:flex;}
       .filter-dropdown-backdrop{display:block;pointer-events:none;}
       .filter-bar.open + .filter-dropdown-backdrop{pointer-events:auto;}
-      .filter-bar-content .header-search-wrap{width:100%;}
-      .filter-bar-content .header-search-wrap input{flex:1;min-width:0;}
-      .filter-bar-content .filter-hours{flex-wrap:wrap;}
+      .filter-bar-content .filter-hours,.filter-bar-content .filter-mood{flex-wrap:wrap;}
       .filter-bar-content .filter-fav-wrap{margin:0;}
     }
     @media (min-width:769px){
@@ -94,10 +86,6 @@
       .filter-bar-content{display:flex !important;flex-wrap:wrap;}
       .filter-price-row{flex-basis:100%;margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);}
     }
-    .search-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
-    .search-chips button{background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:4px 10px;color:var(--muted);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-    .search-chips button:hover{color:var(--gold);border-color:rgba(245,197,66,0.4);}
-    .search-loading{display:inline-flex;align-items:center;gap:6px;}
     .search-loading .mini-spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:var(--dark);border-radius:50%;animation:spin 0.6s linear infinite;}
     .fav-btn{border:none;background:transparent;cursor:pointer;font-size:22px;padding:6px;transition:transform 0.2s, color 0.2s;}
     .fav-btn:hover{transform:scale(1.15);}
@@ -203,7 +191,7 @@
     body.light-theme{--dark:#f5f0e6;--dark2:#ebe5da;--card:#e0d9cc;--text:#1a1710;--muted:#5a5040;}
     body.light-theme .leaflet-popup-content-wrapper{background:var(--card);}
     body.light-theme #sidebar{background:var(--dark2);}
-    #theme-toggle{background:transparent;border:1px solid rgba(255,197,66,0.4);border-radius:20px;padding:6px 10px;color:var(--gold);cursor:pointer;font-size:12px;}
+    #theme-toggle{background:transparent;border:1px solid rgba(255,197,66,0.4);border-radius:8px;padding:6px 8px;color:var(--gold);cursor:pointer;font-size:14px;}
     .compare-modal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:20px;}
     .compare-modal.open{display:flex;}
     .compare-modal .modal{max-width:420px;width:100%;}
@@ -229,24 +217,20 @@
   </a>
   <button type="button" id="theme-toggle" aria-label="Toggle light theme">☀️</button>
   <div class="filter-bar" id="filter-bar">
-    <button type="button" class="filter-bar-trigger" id="filter-bar-trigger" aria-expanded="false" aria-controls="filter-bar-content" aria-label="Open filters and search">
-      <span>Filters & search</span>
+    <button type="button" class="filter-bar-trigger" id="filter-bar-trigger" aria-expanded="false" aria-controls="filter-bar-content" aria-label="Open filters">
+      <span>Filters</span>
       <span class="chevron" aria-hidden="true">▼</span>
     </button>
     <div class="filter-bar-content" id="filter-bar-content" role="region" aria-label="Filters">
-      <div>
-        <div class="header-search-wrap">
-          <input type="text" id="ai-search-input" placeholder="Search: mood, name, cheap beer…" maxlength="200" autocomplete="off" aria-label="Search bars by mood or name"/>
-          <button type="button" id="ai-search-btn" aria-label="Search"><span id="ai-search-btn-text">Search</span></button>
-        </div>
-        <div class="search-chips" id="search-chips" aria-label="Quick search suggestions">
-          <button type="button" data-query="chill">Chill</button>
-          <button type="button" data-query="party">Party</button>
-          <button type="button" data-query="dance">Dance</button>
-          <button type="button" data-query="cheap beer">Cheap beer</button>
-          <button type="button" data-query="date vibe">Date vibe</button>
-        </div>
-      </div>
+      <span class="filter-mood" role="group" aria-label="Mood filter">
+        <button type="button" class="hours-pill" data-mood="" aria-pressed="true">All</button>
+        <button type="button" class="hours-pill" data-mood="chill" aria-pressed="false">Chill</button>
+        <button type="button" class="hours-pill" data-mood="party" aria-pressed="false">Party</button>
+        <button type="button" class="hours-pill" data-mood="dance" aria-pressed="false">Dance</button>
+        <button type="button" class="hours-pill" data-mood="dating" aria-pressed="false">Date</button>
+        <button type="button" class="hours-pill" data-mood="cheap" aria-pressed="false">Cheap</button>
+        <button type="button" class="hours-pill" data-mood="top_rated" aria-pressed="false">Top rated</button>
+      </span>
       <span class="filter-hours" role="group" aria-label="Opening hours filter">
         <button type="button" class="hours-pill active" data-hours="" aria-pressed="true">All</button>
         <button type="button" class="hours-pill" data-hours="open_now" aria-pressed="false">Open now</button>
@@ -332,6 +316,10 @@
   </div>
 
   <div class="sidebar-meta">
+    <div class="meta-row" id="sb-rating-row" style="display:none;">
+      <span>⭐</span>
+      <span id="sb-rating">—</span>
+    </div>
     <div class="meta-row">
       <span>🌐</span>
       <a id="sb-website" href="#" target="_blank">Visit website</a>
@@ -559,13 +547,29 @@ function normalizeBarFromRow(row) {
     dance_notes: getBarField(row, 'dance_notes', 'danceNotes') || null,
     vibes: normalizeVibes(getBarField(row, 'vibes', 'vibe', 'mood')),
     photo_reference: getBarField(row, 'photo_reference', 'photoReference') || null,
-    place_id: getBarField(row, 'place_id', 'placeId') || null
+    place_id: getBarField(row, 'place_id', 'placeId') || null,
+    rating: (function(){ var r=getBarField(row,'rating','place_rating'); return r!=null&&r!==''?Number(r):null; })(),
+    review_count: (function(){ var r=getBarField(row,'review_count','user_ratings_total','reviews'); return r!=null&&r!==''?Number(r):null; })()
   };
 }
 function normalizeVibes(v){
   if(!v)return[];
   if(Array.isArray(v))return v.map(x=>String(x).toLowerCase().trim()).filter(Boolean);
   return String(v).split(/[,;]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+}
+function getBarMoodTags(bar){
+  var tags=[].concat(bar.vibes||[]);
+  if(bar.dance_floor==='yes'||(bar.dance_notes&&/danc|party|vibrant|lively/i.test(bar.dance_notes))){ if(!tags.includes('dance')) tags.push('dance'); if(!tags.includes('party')) tags.push('party'); }
+  if(bar.price_found&&bar.cheapest_beer_sek<=50){ if(!tags.includes('cheap')) tags.push('cheap'); }
+  return tags;
+}
+function barMatchesMood(bar,mood){
+  if(!mood)return true;
+  if(mood==='top_rated') return bar.rating!=null&&bar.rating>=4;
+  var tags=getBarMoodTags(bar);
+  if(mood==='cheap') return bar.price_found&&bar.cheapest_beer_sek<=50;
+  if(mood==='dance') return bar.dance_floor==='yes'||tags.includes('dance')||tags.includes('party')||(bar.dance_notes&&/danc|party/i.test(bar.dance_notes));
+  return tags.some(function(t){ return t===mood||t.indexOf(mood)===0||mood.indexOf(t)===0; });
 }
 
 async function loadBarsFromFile(){
@@ -911,6 +915,14 @@ window.openSidebar=function(bar){
   if(bar.website){wsEl.href=bar.website; wsEl.style.display='';}else wsEl.style.display='none';
   const updated=bar.last_updated?new Date(bar.last_updated).toLocaleDateString('sv-SE'):'—';
   document.getElementById('sb-updated').textContent='Updated '+updated;
+  var ratingRow=document.getElementById('sb-rating-row');
+  var ratingEl=document.getElementById('sb-rating');
+  if(ratingRow&&ratingEl){
+    if(bar.rating!=null){
+      ratingRow.style.display='';
+      ratingEl.textContent=bar.rating.toFixed(1)+'★'+(bar.review_count!=null?' ('+bar.review_count+' reviews)':'');
+    }else{ ratingRow.style.display='none'; }
+  }
   // Dance floor info
   const danceEl=document.getElementById('sb-dance');
   if(bar.dance_floor && bar.dance_floor !== 'unknown'){
@@ -1110,13 +1122,16 @@ document.addEventListener('click', function(e){
 }, true);
 
 function applyFilters(){
-  const hoursEl=document.querySelector('.hours-pill.active');
+  const hoursEl=document.querySelector('.filter-hours .hours-pill.active');
   const hoursVal=(hoursEl?.getAttribute('data-hours')||'').trim();
+  const moodEl=document.querySelector('.filter-mood .hours-pill.active');
+  const moodVal=(moodEl?.getAttribute('data-mood')||'').trim();
   const priceVal=parseInt(document.getElementById('price-filter')?.value,10)||150;
   let filtered=allBars;
   if(nearMeIds&&nearMeIds.length) filtered=filtered.filter(b=>nearMeIds.includes(b.id));
   const hasAiSearch=aiFilterBarIds&&aiFilterBarIds.length>0;
   if(hasAiSearch){ filtered=filtered.filter(b=>aiFilterBarIds.includes(b.id)); }
+  if(moodVal){ filtered=filtered.filter(function(b){ return barMatchesMood(b,moodVal); }); }
   if(hoursVal==='favourites'){ var favIds=getFavouriteIds(); filtered=filtered.filter(b=>favIds.includes(b.id)); }
   if(hoursVal==='watchlist'){ var watchIds=getWatchlistIds(); filtered=filtered.filter(b=>watchIds.includes(b.id)); }
   if(priceVal<150){
@@ -1142,7 +1157,8 @@ function renderBarList(){
 }
 document.querySelectorAll('.hours-pill').forEach(btn=>{
   btn.addEventListener('click', function(){
-    document.querySelectorAll('.hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+    var group=this.closest('.filter-mood,.filter-hours,.filter-fav-wrap');
+    if(group) group.querySelectorAll('.hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
     this.classList.add('active'); this.setAttribute('aria-pressed','true');
     applyFilters();
   });
@@ -1150,9 +1166,11 @@ document.querySelectorAll('.hours-pill').forEach(btn=>{
 function clearAllFilters(){
   aiFilterBarIds=null;
   nearMeIds=null;
-  document.querySelectorAll('.hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
-  var allPill=document.querySelector('.hours-pill[data-hours=""]');
-  if(allPill){ allPill.classList.add('active'); allPill.setAttribute('aria-pressed','true'); }
+  document.querySelectorAll('.filter-mood .hours-pill,.filter-hours .hours-pill,.filter-fav-wrap .hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+  var allHours=document.querySelector('.filter-hours .hours-pill[data-hours=""]');
+  if(allHours){ allHours.classList.add('active'); allHours.setAttribute('aria-pressed','true'); }
+  var allMood=document.querySelector('.filter-mood .hours-pill[data-mood=""]');
+  if(allMood){ allMood.classList.add('active'); allMood.setAttribute('aria-pressed','true'); }
   var slider=document.getElementById('price-filter');
   if(slider){ slider.value=150; }
   var display=document.getElementById('price-display');
@@ -1243,20 +1261,6 @@ function toggleChatPanel(){ chatPanel.classList.toggle('open'); if(chatPanel.cla
 chatToggle.addEventListener('click', toggleChatPanel);
 chatClose.addEventListener('click', closeChatPanel);
 
-var aiSearchInput = document.getElementById('ai-search-input');
-var aiSearchBtn = document.getElementById('ai-search-btn');
-function runAiSearch(){
-  var q = (aiSearchInput && aiSearchInput.value || '').trim();
-  if (!q) return;
-  chatPanel.classList.add('open');
-  chatInput.value = q;
-  aiSearchInput.value = '';
-  sendChatMessage();
-}
-if (aiSearchBtn) aiSearchBtn.addEventListener('click', runAiSearch);
-if (aiSearchInput) aiSearchInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); runAiSearch(); } });
-document.querySelectorAll('#search-chips button').forEach(function(btn){ btn.addEventListener('click', function(){ var q = this.getAttribute('data-query'); if (q) { aiSearchInput.value = q; runAiSearch(); } }); });
-
 function findBarByIdOrName(idOrName){
   if(!allBars||!idOrName)return null;
   const s=String(idOrName).trim().toLowerCase();
@@ -1344,10 +1348,6 @@ async function sendChatMessage(){
   appendChatMessage('user', msg);
   chatInput.value='';
   chatSend.disabled=true;
-  var btnText = document.getElementById('ai-search-btn-text');
-  var searchBtnEl = document.getElementById('ai-search-btn');
-  if (btnText) { btnText.innerHTML = '<span class="search-loading"><span class="mini-spinner"></span> Searching…</span>'; }
-  if (searchBtnEl) searchBtnEl.disabled = true;
   try{
     const res=await fetch('/api/bar-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }) });
     const data=await res.json().catch(()=>({}));
@@ -1377,8 +1377,6 @@ async function sendChatMessage(){
     if(!local.barIds.length){ chatError.textContent=err.message||'Network error'; chatError.style.display='block'; }
   }finally{
     chatSend.disabled=false;
-    if (btnText) btnText.textContent = 'Search';
-    if (searchBtnEl) searchBtnEl.disabled = false;
   }
 }
 

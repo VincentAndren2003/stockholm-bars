@@ -127,7 +127,7 @@ function sleep(ms) {
 async function getPlaceDetails(apiKey, placeId) {
   const params = new URLSearchParams({
     place_id: placeId,
-    fields: 'photos,rating',
+    fields: 'photos,rating,user_ratings_total',
     key: apiKey,
     language: 'en',
   });
@@ -138,7 +138,8 @@ async function getPlaceDetails(apiKey, placeId) {
   const result = data.result || {};
   const photoRef = result.photos?.[0]?.photo_reference || null;
   const rating = result.rating != null ? Number(result.rating) : null;
-  return { photo_reference: photoRef, rating };
+  const review_count = result.user_ratings_total != null ? Number(result.user_ratings_total) : null;
+  return { photo_reference: photoRef, rating, review_count };
 }
 
 function deriveVibes(row, rating) {
@@ -212,6 +213,7 @@ async function main() {
 
     let photo_reference = null;
     let placeRating = null;
+    let review_count = null;
     if (place?.place_id) {
       try {
         const details = await getPlaceDetails(apiKey, place.place_id);
@@ -219,6 +221,7 @@ async function main() {
         if (details) {
           photo_reference = details.photo_reference || null;
           placeRating = details.rating;
+          review_count = details.review_count ?? null;
         }
       } catch (_) {}
     }
@@ -243,6 +246,8 @@ async function main() {
       last_updated: row.last_updated || null,
       place_id: place?.place_id || null,
       photo_reference: photo_reference || null,
+      rating: placeRating ?? row.rating ?? null,
+      review_count: review_count ?? row.review_count ?? null,
       vibes: deriveVibes(row, placeRating),
     };
     if (place?.formatted_address) barEntry.correct_address = place.formatted_address;
