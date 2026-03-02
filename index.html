@@ -19,16 +19,11 @@
     .logo:hover h1,.logo:hover span{opacity:0.9;}
     .logo h1{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--gold);line-height:1;}
     .logo span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-    .filter-bar{pointer-events:all;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(26,23,16,0.92);border:1px solid rgba(245,197,66,0.12);border-radius:12px;padding:6px 10px;backdrop-filter:blur(12px);}
-    .filter-bar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;}
-    .filter-mood{display:flex;align-items:center;gap:4px;}
-    .filter-mood .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
-    .filter-mood .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
-    .filter-mood .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
-    .filter-bar input[type="range"]{appearance:none;-webkit-appearance:none;width:120px;height:3px;background:linear-gradient(to right, var(--gold) 0%, var(--gold) 50%, rgba(255,255,255,0.1) 50%);border-radius:2px;outline:none;}
-    .filter-bar input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
-    #price-display{font-size:13px;font-weight:500;color:var(--gold);min-width:60px;}
-    .filter-price-row{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .top-bar{pointer-events:all;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:rgba(14,12,9,0.98);border-bottom:1px solid rgba(245,197,66,0.12);padding:12px 20px;backdrop-filter:blur(12px);}
+    .mood-pills{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .mood-pills .pill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:8px 14px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .mood-pills .pill:hover{color:var(--text);border-color:rgba(245,197,66,0.35);background:rgba(245,197,66,0.08);}
+    .mood-pills .pill.active{background:rgba(245,197,66,0.18);border-color:rgba(245,197,66,0.5);color:var(--gold);}
     #map{width:100%;height:100vh;}
     #sidebar-backdrop{position:fixed;inset:0;background:transparent;z-index:1400;pointer-events:none;transition:background 0.2s;}
     #sidebar-backdrop.visible{pointer-events:auto;background:rgba(0,0,0,0.35);}
@@ -65,26 +60,7 @@
     .sidebar-hours-table tr.today td:last-child{color:var(--text);}
     .sidebar-open-now{font-size:12px;color:var(--green);margin-bottom:8px;}
     .sidebar-closes-at{font-size:12px;color:var(--muted);margin-bottom:8px;}
-    .filter-bar-trigger{display:none;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 14px;background:rgba(245,197,66,0.12);border:1px solid rgba(245,197,66,0.35);border-radius:12px;color:var(--gold);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;}
-    .filter-bar-trigger:hover{background:rgba(245,197,66,0.2);}
-    .filter-bar-trigger .chevron{transition:transform 0.25s;}
-    .filter-bar.open .filter-bar-trigger .chevron{transform:rotate(180deg);}
-    .filter-dropdown-backdrop{display:none;position:fixed;inset:0;z-index:998;background:transparent;}
-    @media (max-width:768px){
-      header{flex-direction:column;align-items:stretch;gap:0;}
-      .filter-bar{position:relative;}
-      .filter-bar-trigger{display:flex;}
-      .filter-bar-content{display:none;position:absolute;top:100%;left:0;right:0;margin-top:2px;padding:14px;background:var(--dark2);border:1px solid rgba(245,197,66,0.2);border-radius:0 0 12px 12px;box-shadow:0 12px 32px rgba(0,0,0,0.5);z-index:1001;flex-direction:column;gap:12px;max-height:70vh;overflow-y:auto;}
-      .filter-bar.open .filter-bar-content{display:flex;}
-      .filter-dropdown-backdrop{display:block;pointer-events:none;}
-      .filter-bar.open + .filter-dropdown-backdrop{pointer-events:auto;}
-      .filter-bar-content .filter-mood{flex-wrap:wrap;}
-    }
-    @media (min-width:769px){
-      .filter-bar-trigger{display:none !important;}
-      .filter-bar-content{display:flex !important;flex-wrap:wrap;}
-    }
-    .search-loading .mini-spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:var(--dark);border-radius:50%;animation:spin 0.6s linear infinite;}
+    @media (max-width:768px){ header{padding:10px 12px;} .top-bar{gap:10px;padding:10px 12px;} .mood-pills .pill{padding:6px 12px;font-size:11px;} }
     .fav-btn{border:none;background:transparent;cursor:pointer;font-size:22px;padding:6px;transition:transform 0.2s, color 0.2s;}
     .fav-btn:hover{transform:scale(1.15);}
     .fav-btn:not(.faved){color:var(--muted);opacity:0.7;}
@@ -139,35 +115,6 @@
     .marker-pin .marker-line{width:2px;height:18px;background:var(--gold);opacity:0.9;}
     .marker-pin.closed .marker-icon{background:#3a3530 !important;border-color:#4a4540 !important;opacity:0.85;}
     .marker-pin.closed .marker-line{background:var(--muted);opacity:0.6;}
-    /* AI bar search chat */
-    #chat-toggle{position:fixed;bottom:90px;left:20px;z-index:1100;width:48px;height:48px;border-radius:50%;background:rgba(245,197,66,0.9);border:2px solid var(--amber);color:var(--dark);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.4);transition:transform 0.2s;}
-    #chat-toggle:hover{transform:scale(1.05);}
-    #chat-panel{position:fixed;bottom:90px;left:20px;width:320px;max-height:400px;background:var(--dark2);border:1px solid rgba(245,197,66,0.25);border-radius:12px;z-index:1099;display:none;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.5);overflow:hidden;}
-    #chat-panel.open{display:flex;}
-    .chat-header{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;}
-    .chat-header span{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--gold);}
-    .chat-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px;}
-    .chat-close:hover{color:var(--text);}
-    .chat-messages{flex:1;overflow-y:auto;padding:12px;min-height:120px;max-height:220px;}
-    .chat-msg{font-size:13px;margin-bottom:10px;line-height:1.5;}
-    .chat-msg.user{color:var(--gold);}
-    .chat-msg.bot{color:var(--text);}
-    .chat-bar-list{margin-top:8px;}
-    .chat-bar-list a{display:block;padding:6px 10px;margin:4px 0;background:rgba(255,255,255,0.06);border-radius:8px;color:var(--text);text-decoration:none;font-size:12px;border:1px solid transparent;transition:all 0.2s;}
-    .chat-bar-list a:hover{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.3);color:var(--gold);}
-    .chat-clear-wrap{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.06);}
-    .chat-clear{width:100%;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-    .chat-clear:hover{color:var(--text);border-color:rgba(255,255,255,0.25);}
-    .chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.08);}
-    .chat-input-row input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
-    .chat-input-row input:focus{border-color:rgba(245,197,66,0.5);}
-    .chat-input-row input::placeholder{color:var(--muted);}
-    .chat-input-row button{padding:10px 16px;background:var(--gold);color:var(--dark);border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-    .chat-input-row button:hover{background:#ffd666;}
-    .chat-input-row button:disabled{opacity:0.6;cursor:not-allowed;}
-    .chat-error{font-size:12px;color:#e08c6a;margin-top:4px;}
-    .search-bars-btn{background:rgba(245,197,66,0.2);border:1px solid rgba(245,197,66,0.5);border-radius:20px;padding:6px 14px;color:var(--gold);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
-    .search-bars-btn:hover{background:rgba(245,197,66,0.3);border-color:var(--gold);}
     #bar-list-toggle{display:none;position:fixed;bottom:90px;right:20px;z-index:1100;width:48px;height:48px;border-radius:50%;background:var(--card);border:2px solid rgba(245,197,66,0.4);color:var(--gold);font-size:14px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.4);transition:transform 0.2s, opacity 0.2s;}
     #bar-list-toggle:hover{transform:scale(1.05);}
     #bar-list-sheet{display:none;position:fixed;left:0;right:0;bottom:0;max-height:45vh;background:var(--dark2);border-top:1px solid rgba(245,197,66,0.2);z-index:150;border-radius:16px 16px 0 0;flex-direction:column;box-shadow:0 -8px 32px rgba(0,0,0,0.5);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100%);overflow:hidden;}
@@ -204,31 +151,22 @@
   <p>Fetching the cheapest beers in the city...</p>
 </div>
 
-<header>
+<header class="top-bar">
   <a class="logo" href="." onclick="window.location.reload(); return false;" title="Reload">
     <h1>Billigaste Ölen</h1>
     <span>Stockholm Beer Prices</span>
   </a>
-  <div class="filter-bar" id="filter-bar">
-    <button type="button" class="filter-bar-trigger" id="filter-bar-trigger" aria-expanded="false" aria-controls="filter-bar-content" aria-label="Open mood filters">
-      <span>Mood</span>
-      <span class="chevron" aria-hidden="true">▼</span>
-    </button>
-    <div class="filter-bar-content" id="filter-bar-content" role="region" aria-label="Mood filters">
-      <span class="filter-mood" role="group" aria-label="Mood filter (LLM-based)">
-        <button type="button" class="hours-pill active" data-mood="" aria-pressed="true">All</button>
-        <button type="button" class="hours-pill" data-mood="first_date" aria-pressed="false">First date</button>
-        <button type="button" class="hours-pill" data-mood="third_date" aria-pressed="false">Third date</button>
-        <button type="button" class="hours-pill" data-mood="chill_date" aria-pressed="false">Chill date</button>
-        <button type="button" class="hours-pill" data-mood="party_night" aria-pressed="false">Party night</button>
-        <button type="button" class="hours-pill" data-mood="chill_hangout" aria-pressed="false">Chill hangout</button>
-        <button type="button" class="hours-pill" data-mood="group_friends" aria-pressed="false">Group</button>
-        <button type="button" class="hours-pill" data-mood="cheap" aria-pressed="false">Cheap</button>
-        <button type="button" class="hours-pill" data-mood="top_rated" aria-pressed="false">Top rated</button>
-      </span>
-    </div>
-  </div>
-  <div class="filter-dropdown-backdrop" id="filter-dropdown-backdrop" aria-hidden="true"></div>
+  <nav class="mood-pills" role="group" aria-label="Mood filters">
+    <button type="button" class="pill active" data-mood="" aria-pressed="true">All</button>
+    <button type="button" class="pill" data-mood="first_date" aria-pressed="false">First date</button>
+    <button type="button" class="pill" data-mood="third_date" aria-pressed="false">Third date</button>
+    <button type="button" class="pill" data-mood="chill_date" aria-pressed="false">Chill date</button>
+    <button type="button" class="pill" data-mood="party_night" aria-pressed="false">Party night</button>
+    <button type="button" class="pill" data-mood="chill_hangout" aria-pressed="false">Chill hangout</button>
+    <button type="button" class="pill" data-mood="group_friends" aria-pressed="false">Group</button>
+    <button type="button" class="pill" data-mood="cheap" aria-pressed="false">Cheap</button>
+    <button type="button" class="pill" data-mood="top_rated" aria-pressed="false">Top rated</button>
+  </nav>
 </header>
 
 <script type="application/json" id="embedded-bars">[{"id":"älgen-bar","bar_name":"Älgen Bar","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":39,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"amici-nostri","bar_name":"Amici Nostri","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":65,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"babel-bazaar","bar_name":"Babel bazaar","location":"Hornsgatan 75, Stockholm","lat":59.31667,"lng":18.0675,"price":65,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: 15:00 - 00:00","dance_floor":"yes","dance_notes":"Popular spot for dancing with a vibrant atmosphere.","last_updated":null},{"id":"balthazar","bar_name":"Balthazar","location":"Södermalm, Stockholm, Sweden","lat":null,"lng":null,"price":48,"opening_hours":null,"dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"bar-agrikultur","bar_name":"Bar Agrikultur","location":"Tjärhovsgatan 21, 116 28 Stockholm","lat":59.31667,"lng":18.07123,"price":75,"opening_hours":"{Monday:17:00 - 23:00,Tuesday:17:00 - 23:00,Wednesday:17:00 - 23:00,Thursday:17:00 - 23:00,Friday:17:00 - 01:00,Saturday:17:00 - 01:00,Sunday:Closed}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bar-kaja","bar_name":"Bar Kaja","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06667,"price":82,"opening_hours":"Mon-Sun: 17:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"bar-klow","bar_name":"Bar Klow","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":58,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bar-lilla-compagniet","bar_name":"Bar Lilla Compagniet","location":"Katarina Bangata 19, 116 39 Stockholm","lat":59.31667,"lng":18.07123,"price":85,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bara-2.noll","bar_name":"Bara 2.Noll","location":"Hornsgatan 2, Stockholm","lat":59.31667,"lng":18.0675,"price":49,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"bara-enkelt","bar_name":"Bara Enkelt","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.0675,"price":49,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"baras-backe","bar_name":"Baras Backe","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.0675,"price":49,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"baras-gemenskap","bar_name":"Baras Gemenskap","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":55,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"beer-n'play-hornstull","bar_name":"Beer n'Play Hornstull","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06667,"price":55,"opening_hours":"Monday to Sunday: 12:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"big-ben-pub","bar_name":"Big Ben Pub","location":"Götgatan 78, 116 62 Stockholm","lat":59.31667,"lng":18.07123,"price":59,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 03:00,Saturday:15:00 - 03:00,Sunday:15:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bistro-bananas","bar_name":"Bistro Bananas","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":82,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bistro-barbro","bar_name":"Bistro Barbro","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06667,"price":85,"opening_hours":"Monday to Friday: 11:30 AM - 1:00 AM, Saturday: 12:00 PM - 1:00 AM, Sunday: 12:00 PM - 12:00 AM","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bistroteket","bar_name":"Bistroteket","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":55,"opening_hours":"Monday to Friday: 11:00 - 23:00, Saturday: 12:00 - 23:00, Sunday: 12:00 - 22:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"black-&-brown-inn","bar_name":"Black & Brown Inn","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":74,"opening_hours":"Mon-Sun: 15:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"bleck","bar_name":"Bleck","location":"Bleckholmsvägen 7, 115 20 Stockholm","lat":59.3295,"lng":18.08645,"price":82,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 23:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"blecktornskällaren","bar_name":"Blecktornskällaren","location":"Blecktornsgatan 29, 116 62 Stockholm","lat":59.31667,"lng":18.08611,"price":60,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 24:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"brewdog-bar","bar_name":"Brewdog Bar","location":"Sveavägen 77, 113 50 Stockholm","lat":59.3399,"lng":18.0638,"price":95,"opening_hours":"{Monday:15:00 - 23:00,Tuesday:15:00 - 23:00,Wednesday:15:00 - 23:00,Thursday:15:00 - 23:00,Friday:15:00 - 01:00,Saturday:12:00 - 01:00,Sunday:12:00 - 23:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"carmen","bar_name":"Carmen","location":"Hornsgatan 66, Stockholm","lat":59.31678,"lng":18.06745,"price":49,"opening_hours":"Mon-Sun: 17:00 - 01:00","dance_floor":"yes","dance_notes":"Popular spot for dancing with a vibrant atmosphere.","last_updated":null},{"id":"charles-dickens","bar_name":"Charles Dickens","location":"Hornsgatan 24, Stockholm","lat":59.31667,"lng":18.0675,"price":39,"opening_hours":"Mon-Thu 15:00-01:00, Fri-Sat 15:00-03:00, Sun 15:00-01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"city-biljard-skanstull","bar_name":"City Biljard Skanstull","location":"Skanstullsgatan 1, 116 45 Stockholm","lat":59.31667,"lng":18.08611,"price":69,"opening_hours":"Mon-Sun: 12:00 - 02:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"continental-bar-nytorget","bar_name":"Continental Bar Nytorget","location":"Nytorgsgatan 38, 116 40 Stockholm","lat":59.31667,"lng":18.07123,"price":49,"opening_hours":"Monday to Sunday: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"cornostrada","bar_name":"Cornostrada","location":"Hornsgatan 66, Stockholm","lat":59.3168,"lng":18.06745,"price":59,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"crazy-horse","bar_name":"Crazy Horse","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31667,"lng":18.06745,"price":36,"opening_hours":"Mon-Sun: 17:00 - 01:00","dance_floor":"yes","dance_notes":"Popular spot for dancing with a lively atmosphere.","last_updated":null},{"id":"crispy-pizza-bistro","bar_name":"Crispy Pizza Bistro","location":null,"lat":null,"lng":null,"price":58,"opening_hours":null,"dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"den-gröne-jägaren","bar_name":"Den Gröne Jägaren","location":"Götgatan 78, 116 46 Stockholm","lat":59.31667,"lng":18.07123,"price":48,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 03:00,Saturday:15:00 - 03:00,Sunday:15:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"dovas-hornstull","bar_name":"Dovas Hornstull","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06667,"price":35,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"dovas-mariatorget","bar_name":"Dovas Mariatorget","location":"Mariatorget 3, 118 48 Stockholm","lat":59.31667,"lng":18.06667,"price":39,"opening_hours":"Monday to Friday: 15:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 23:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"elefantpojken","bar_name":"Elefantpojken","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":68,"opening_hours":"Mon-Sun: 17:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"emanuel-bistro","bar_name":"Emanuel bistro","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":48,"opening_hours":"Monday to Friday: 11:00 - 23:00, Saturday: 12:00 - 23:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"fotöljen-slussen","bar_name":"Fotöljen Slussen","location":"Slussens Torg 1, 111 30 Stockholm","lat":59.32,"lng":18.071,"price":59,"opening_hours":"Mon-Sun: 11:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"german-beer-hall-zinken","bar_name":"German Beer hall Zinken","location":"Zinkensdamm 1, 117 41 Stockholm, Sweden","lat":59.31667,"lng":18.07123,"price":49,"opening_hours":"{Monday:15:00 - 23:00,Tuesday:15:00 - 23:00,Wednesday:15:00 - 23:00,Thursday:15:00 - 23:00,Friday:15:00 - 01:00,Saturday:12:00 - 01:00,Sunday:12:00 - 23:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"haket","bar_name":"Haket","location":"Hälsingegatan 1, 113 31 Stockholm","lat":59.33258,"lng":18.06773,"price":49,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 02:00,Saturday:15:00 - 02:00,Sunday:15:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"häktet","bar_name":"Häktet","location":"Hornsgatan 82, Stockholm","lat":59.31667,"lng":18.06745,"price":84,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"half-way-inn","bar_name":"Half way inn","location":"Hornsgatan 82, 118 21 Stockholm","lat":59.31667,"lng":18.0675,"price":82,"opening_hours":"Monday to Sunday: 12:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"hallen-södermalm","bar_name":"Hallen Södermalm","location":"Götgatan 78, 116 62 Stockholm","lat":59.31667,"lng":18.07123,"price":49,"opening_hours":"Mon-Sun: 11:00-01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"harvest-home","bar_name":"Harvest Home","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31678,"lng":18.06745,"price":72,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"himlen","bar_name":"Himlen","location":"Mäster Samuelsgatan 38, 111 57 Stockholm","lat":59.33258,"lng":18.06773,"price":79,"opening_hours":"{Monday:17:00 - 01:00,Tuesday:17:00 - 01:00,Wednesday:17:00 - 01:00,Thursday:17:00 - 01:00,Friday:17:00 - 02:00,Saturday:17:00 - 02:00,Sunday:Closed}","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"hirschenkeller","bar_name":"Hirschenkeller","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":32,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"hirschenkeller-götgatan","bar_name":"Hirschenkeller Götgatan","location":"Götgatan 78, 116 62 Stockholm","lat":59.31667,"lng":18.07123,"price":36,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 02:00,Saturday:15:00 - 02:00,Sunday:15:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"holidays-götgatan","bar_name":"Holidays Götgatan","location":"Götgatan 39, Stockholm","lat":59.31667,"lng":18.07123,"price":39,"opening_hours":"Mon-Sun: 15:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"holly-bush","bar_name":"Holly Bush","location":"null","lat":null,"lng":null,"price":49,"opening_hours":null,"dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"hornhuset","bar_name":"Hornhuset","location":"Hornsgatan 63, 118 49 Stockholm","lat":59.31667,"lng":18.06745,"price":49,"opening_hours":"{Monday:16:00 - 01:00,Tuesday:16:00 - 01:00,Wednesday:16:00 - 01:00,Thursday:16:00 - 01:00,Friday:16:00 - 02:00,Saturday:12:00 - 02:00,Sunday:12:00 - 01:00}","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"horntulls-bodega","bar_name":"Horntulls Bodega","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06667,"price":86,"opening_hours":"Monday to Friday: 15:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"il-tempo","bar_name":"Il Tempo","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.3168,"lng":18.06745,"price":80,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"kajsas-i-parken","bar_name":"Kajsas i parken","location":"Katarina Bangata 19, 116 42 Stockholm","lat":59.31667,"lng":18.07123,"price":89,"opening_hours":"Monday to Friday: 11:00 - 22:00, Saturday: 12:00 - 22:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"kajsas-i-tullen","bar_name":"Kajsas i tullen","location":"Tullgårdsgatan 5, 118 62 Stockholm","lat":59.31667,"lng":18.08611,"price":84,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 23:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"kellys","bar_name":"Kellys","location":"Götgatan 78, 116 62 Stockholm","lat":59.31667,"lng":18.07123,"price":39,"opening_hours":"Monday to Sunday: 15:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"kloster","bar_name":"Kloster","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31678,"lng":18.06745,"price":43,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"krogen-soldaten-svejk","bar_name":"Krogen Soldaten Svejk","location":"Tjärhovsgatan 21, Stockholm","lat":59.31667,"lng":18.07123,"price":92,"opening_hours":"Monday to Friday: 11:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 24:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"krukan","bar_name":"Krukan","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.0675,"price":49,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"kvarnen","bar_name":"Kvarnen","location":"Tjärhovsgatan 4, 116 21 Stockholm","lat":59.31667,"lng":18.07123,"price":86,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 02:00,Saturday:12:00 - 02:00,Sunday:12:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"la-cucaracha","bar_name":"La cucaracha","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06667,"price":76,"opening_hours":"Mon-Sun: 17:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"lion-bar-folkungagatan","bar_name":"Lion Bar Folkungagatan","location":"Folkungagatan 63, 116 22 Stockholm","lat":59.31667,"lng":18.07123,"price":38,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"lion-bar-hornstull","bar_name":"Lion Bar Hornstull","location":"Hornsgatan 78, Stockholm","lat":59.31667,"lng":18.06667,"price":39,"opening_hours":"Mon-Sun: 15:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"lion-bar-mariatorget","bar_name":"Lion Bar Mariatorget","location":"Mariatorget 3, 118 91 Stockholm","lat":59.31667,"lng":18.06667,"price":39,"opening_hours":"Mon-Sun: 11:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"loch-ness","bar_name":"Loch Ness","location":"Hornsgatan 78, Stockholm","lat":59.31667,"lng":18.06745,"price":59,"opening_hours":"Monday to Sunday: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"lykke","bar_name":"Lykke","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31678,"lng":18.06745,"price":85,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"mästers","bar_name":"Mästers","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":49,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"medis-kök-och-bar","bar_name":"Medis kök och bar","location":"Medborgarplatsen 3, 118 26 Stockholm","lat":59.31667,"lng":18.07123,"price":74,"opening_hours":"Mon-Sun: 11:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"mikkeller-stockholm","bar_name":"Mikkeller Stockholm","location":"Södermalm, Stockholm","lat":null,"lng":null,"price":64,"opening_hours":null,"dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"mister-plankstek","bar_name":"Mister Plankstek","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":59,"opening_hours":"Monday to Friday: 11:00 - 23:00, Saturday: 12:00 - 23:00, Sunday: 12:00 - 22:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"morfar-ginko","bar_name":"Morfar Ginko","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":85,"opening_hours":"{Monday:17:00 - 01:00,Tuesday:17:00 - 01:00,Wednesday:17:00 - 01:00,Thursday:17:00 - 01:00,Friday:17:00 - 02:00,Saturday:17:00 - 02:00,Sunday:17:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"no-name-bar","bar_name":"No Name Bar","location":"Tjärhovsgatan 21, 116 28 Stockholm","lat":59.31667,"lng":18.07123,"price":39,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"old-beefeater-inn","bar_name":"Old Beefeater Inn","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.0675,"price":48,"opening_hours":"Monday to Sunday: 11:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"oliver-twist","bar_name":"Oliver Twist","location":"Östgötagatan 9, 116 25 Stockholm","lat":59.31667,"lng":18.07123,"price":70,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 03:00,Saturday:15:00 - 03:00,Sunday:15:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"ölstugan-tullen-hornstull","bar_name":"Ölstugan Tullen Hornstull","location":"Hornsgatan 78, 117 27 Stockholm, Sweden","lat":59.31667,"lng":18.06667,"price":52,"opening_hours":"Monday to Thursday: 15:00 - 01:00, Friday: 15:00 - 02:00, Saturday: 12:00 - 02:00, Sunday: 12:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"omnipollos-hatt","bar_name":"Omnipollos hatt","location":"Högalidsgatan 26, Stockholm","lat":59.31667,"lng":18.08611,"price":98,"opening_hours":"{Monday:15:00 - 23:00,Tuesday:15:00 - 23:00,Wednesday:15:00 - 23:00,Thursday:15:00 - 23:00,Friday:15:00 - 00:00,Saturday:12:00 - 00:00,Sunday:12:00 - 23:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"östgötakällaren","bar_name":"Östgötakällaren","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06667,"price":89,"opening_hours":"Monday to Friday: 11:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 24:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"parken-söder","bar_name":"Parken söder","location":"Södermannagatan 21, Stockholm","lat":59.31667,"lng":18.0675,"price":44,"opening_hours":"Mon-Sun: 15:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"pinocchio-kök-och-bar","bar_name":"Pinocchio kök och bar","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":39,"opening_hours":"Monday to Friday: 11:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"pitcher's-mariatorget","bar_name":"Pitcher's Mariatorget","location":"Mariatorget 1, 118 91 Stockholm","lat":59.31667,"lng":18.06667,"price":69,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 02:00,Saturday:12:00 - 02:00,Sunday:12:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"polhem-söder","bar_name":"Polhem Söder","location":"Polhemsgatan 5, 118 60 Stockholm","lat":59.31667,"lng":18.08611,"price":64,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"post-bar","bar_name":"Post Bar","location":"Hornsgatan 63, Stockholm, Sweden","lat":59.31667,"lng":18.06745,"price":78,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"racamaca","bar_name":"Racamaca","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":80,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"restaurang-nytorget-6","bar_name":"Restaurang Nytorget 6","location":"Nytorget 6, 116 40 Stockholm","lat":59.31667,"lng":18.07123,"price":81,"opening_hours":"Monday to Friday: 11:00 - 23:00, Saturday: 10:00 - 23:00, Sunday: 10:00 - 22:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"retro-bar-hornsgatan","bar_name":"Retro Bar Hornsgatan","location":"Hornsgatan 50, Stockholm","lat":59.31667,"lng":18.06745,"price":32,"opening_hours":"Monday to Sunday: 17:00 - 01:00","dance_floor":"yes","dance_notes":"Popular for dancing on weekends.","last_updated":null},{"id":"retro-bar-nytorget","bar_name":"Retro Bar Nytorget","location":"Nytorgsgatan 38, 116 40 Stockholm","lat":59.31667,"lng":18.08611,"price":42,"opening_hours":"Monday to Sunday: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"rock-and-bowl","bar_name":"Rock And Bowl","location":"Hornsgatan 75, Stockholm","lat":59.31667,"lng":18.06745,"price":54,"opening_hours":"{Monday:15:00 - 01:00,Tuesday:15:00 - 01:00,Wednesday:15:00 - 01:00,Thursday:15:00 - 01:00,Friday:15:00 - 02:00,Saturday:12:00 - 02:00,Sunday:12:00 - 01:00}","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"snaps","bar_name":"Snaps","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31678,"lng":18.06745,"price":72,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 23:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"snövit-bar","bar_name":"Snövit Bar","location":"Tjärhovsgatan 21, 116 28 Stockholm","lat":59.31667,"lng":18.07123,"price":60,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"yes","dance_notes":"Popular spot for dancing with a vibrant atmosphere.","last_updated":null},{"id":"söder-bar","bar_name":"Söder Bar","location":"Götgatan 78, 116 62 Stockholm, Sweden","lat":59.31667,"lng":18.07123,"price":69,"opening_hours":"Monday to Sunday: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"söderhallen-biljard","bar_name":"Söderhallen Biljard","location":"Söderhallarna, Medborgarplatsen 3, 118 26 Stockholm","lat":59.31667,"lng":18.07123,"price":68,"opening_hours":"Monday to Friday: 12:00 - 23:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 23:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"söderkällaren","bar_name":"Söderkällaren","location":"Södermannagatan 55, 116 40 Stockholm","lat":59.31667,"lng":18.06745,"price":39,"opening_hours":"Mon-Sun: 15:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"södra-sidan-pub","bar_name":"Södra Sidan Pub","location":"Södermalmsallén 36, 116 45 Stockholm","lat":59.31667,"lng":18.07123,"price":33,"opening_hours":"Mon-Sun: 15:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"spago","bar_name":"Spago","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.3168,"lng":18.06645,"price":89,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 23:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"stockholm-ost-&-chark","bar_name":"Stockholm Ost & Chark","location":"Hornsgatan 32, Stockholm","lat":59.31667,"lng":18.06745,"price":89,"opening_hours":"Mon-Sun: 11:00 - 20:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"stuket-resturang","bar_name":"Stuket Resturang","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06745,"price":39,"opening_hours":"Monday to Friday: 11:00 - 01:00, Saturday: 12:00 - 01:00, Sunday: 12:00 - 00:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"svea-la-regina","bar_name":"Svea La Regina","location":"Hornsgatan 66, Stockholm","lat":59.31678,"lng":18.06745,"price":45,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"the-central-bar-folkungagatan","bar_name":"The Central Bar Folkungagatan","location":"Folkungagatan 47, 116 22 Stockholm, Sweden","lat":59.31667,"lng":18.07123,"price":39,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"the-central-bar-götgatan","bar_name":"The Central Bar Götgatan","location":"Götgatan 78, 116 62 Stockholm, Sweden","lat":59.31667,"lng":18.07123,"price":39,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"tiffany's","bar_name":"Tiffany's","location":"Hornsgatan 18, Stockholm, Sweden","lat":59.31667,"lng":18.06667,"price":64,"opening_hours":"Monday to Friday: 17:00 - 01:00, Saturday: 15:00 - 01:00, Sunday: Closed","dance_floor":"yes","dance_notes":"Popular spot for dancing on weekends.","last_updated":null},{"id":"timebar","bar_name":"Timebar","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31667,"lng":18.06745,"price":44,"opening_hours":"Mon-Sun: 17:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"tjoget","bar_name":"Tjoget","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06725,"price":86,"opening_hours":"{Monday:17:00 - 01:00,Tuesday:17:00 - 01:00,Wednesday:17:00 - 01:00,Thursday:17:00 - 01:00,Friday:17:00 - 02:00,Saturday:17:00 - 02:00,Sunday:17:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"troll-hornsgatan","bar_name":"Troll Hornsgatan","location":"Hornsgatan 66, Stockholm","lat":59.31667,"lng":18.06667,"price":44,"opening_hours":"Mon-Sun: 16:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"urban-deli-nytorget","bar_name":"Urban Deli Nytorget","location":"Nytorgsgatan 38, 116 40 Stockholm","lat":59.31667,"lng":18.07123,"price":75,"opening_hours":"{Monday:08:00 - 22:00,Tuesday:08:00 - 22:00,Wednesday:08:00 - 22:00,Thursday:08:00 - 22:00,Friday:08:00 - 23:00,Saturday:09:00 - 23:00,Sunday:09:00 - 22:00}","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"viking-bar","bar_name":"Viking Bar","location":"Hornsgatan 66, Stockholm, Sweden","lat":59.31667,"lng":18.06745,"price":49,"opening_hours":"Monday to Sunday: 16:00 - 01:00","dance_floor":"unknown","dance_notes":null,"last_updated":null},{"id":"voodoo-room","bar_name":"Voodoo Room","location":"Hornsgatan 78, Stockholm","lat":59.31667,"lng":18.06667,"price":69,"opening_hours":"Monday to Sunday: 17:00 - 01:00","dance_floor":"yes","dance_notes":"Offers a vibrant atmosphere with occasional DJ sets.","last_updated":null},{"id":"wollmar","bar_name":"Wollmar","location":"Wollmar Yxkullsgatan 10, 118 50 Stockholm","lat":59.31667,"lng":18.07123,"price":59,"opening_hours":"Monday to Friday: 16:00 - 01:00, Saturday: 14:00 - 01:00, Sunday: 14:00 - 00:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"ylias","bar_name":"Ylias","location":"Hornsgatan 66, Stockholm","lat":59.3168,"lng":18.06645,"price":79,"opening_hours":"Monday to Sunday: 17:00 - 01:00","dance_floor":"no","dance_notes":null,"last_updated":null},{"id":"zinkens-krog","bar_name":"Zinkens Krog","location":"Zinkensdamm 1, 117 41 Stockholm","lat":59.31667,"lng":18.08611,"price":56,"opening_hours":"{Monday:11:00 - 01:00,Tuesday:11:00 - 01:00,Wednesday:11:00 - 01:00,Thursday:11:00 - 01:00,Friday:11:00 - 02:00,Saturday:11:00 - 02:00,Sunday:11:00 - 01:00}","dance_floor":"no","dance_notes":null,"last_updated":null}]</script>
@@ -999,31 +937,6 @@ window.closeSidebar=function(){ document.getElementById('sidebar').classList.rem
 document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);
 
 (function(){
-  var filterBar=document.getElementById('filter-bar');
-  var filterTrigger=document.getElementById('filter-bar-trigger');
-  var filterBackdrop=document.getElementById('filter-dropdown-backdrop');
-  if(!filterBar||!filterTrigger||!filterBackdrop) return;
-  function openFilterBar(){
-    filterBar.classList.add('open');
-    filterTrigger.setAttribute('aria-expanded','true');
-    filterBackdrop.setAttribute('aria-hidden','false');
-  }
-  function closeFilterBar(){
-    filterBar.classList.remove('open');
-    filterTrigger.setAttribute('aria-expanded','false');
-    filterBackdrop.setAttribute('aria-hidden','true');
-  }
-  filterTrigger.addEventListener('click', function(){
-    if(filterBar.classList.contains('open')) closeFilterBar();
-    else openFilterBar();
-  });
-  filterBackdrop.addEventListener('click', closeFilterBar);
-  document.addEventListener('keydown', function(e){
-    if(e.key==='Escape'&&filterBar.classList.contains('open')) closeFilterBar();
-  });
-})();
-
-(function(){
   var listSheet=document.getElementById('bar-list-sheet');
   var listToggle=document.getElementById('bar-list-toggle');
   if(listToggle&&listSheet){
@@ -1061,7 +974,7 @@ document.addEventListener('click', function(e){
 }, true);
 
 function applyFilters(){
-  const moodEl=document.querySelector('.filter-mood .hours-pill.active');
+  const moodEl=document.querySelector('.mood-pills .pill.active');
   const moodVal=(moodEl?.getAttribute('data-mood')||'').trim();
   let filtered=allBars;
   const hasAiSearch=aiFilterBarIds&&aiFilterBarIds.length>0;
@@ -1085,18 +998,17 @@ function renderBarList(){
     el.appendChild(row);
   });
 }
-document.querySelectorAll('.filter-mood .hours-pill').forEach(btn=>{
+document.querySelectorAll('.mood-pills .pill').forEach(btn=>{
   btn.addEventListener('click', function(){
-    var group=this.closest('.filter-mood');
-    if(group) group.querySelectorAll('.hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+    document.querySelectorAll('.mood-pills .pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
     this.classList.add('active'); this.setAttribute('aria-pressed','true');
     applyFilters();
   });
 });
 function clearAllFilters(){
   aiFilterBarIds=null;
-  document.querySelectorAll('.filter-mood .hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
-  var allMood=document.querySelector('.filter-mood .hours-pill[data-mood=""]');
+  document.querySelectorAll('.mood-pills .pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+  var allMood=document.querySelector('.mood-pills .pill[data-mood=""]');
   if(allMood){ allMood.classList.add('active'); allMood.setAttribute('aria-pressed','true'); }
   applyFilters();
 }
@@ -1153,140 +1065,8 @@ window.submitSuggestion=async function(){
   }
 };
 
-// ——— AI bar search chat (optional; hidden when chat UI removed) ———
-const chatToggle=document.getElementById('chat-toggle');
-const chatPanel=document.getElementById('chat-panel');
-const chatClose=document.getElementById('chat-close');
-const chatMessages=document.getElementById('chat-messages');
-const chatInput=document.getElementById('chat-input');
-const chatSend=document.getElementById('chat-send');
-const chatError=document.getElementById('chat-error');
-const chatClearWrap=document.getElementById('chat-clear-wrap');
-const chatClear=document.getElementById('chat-clear');
-
-function openChatPanel(){ if(chatPanel){ chatPanel.classList.add('open'); if(chatInput) chatInput.focus(); } }
-function closeChatPanel(){ if(chatPanel) chatPanel.classList.remove('open'); }
-function toggleChatPanel(){ if(chatPanel){ chatPanel.classList.toggle('open'); if(chatPanel.classList.contains('open')&&chatInput) chatInput.focus(); } } }
-if(chatToggle&&chatPanel){ chatToggle.addEventListener('click', toggleChatPanel); if(chatClose) chatClose.addEventListener('click', closeChatPanel); }
-
-function findBarByIdOrName(idOrName){
-  if(!allBars||!idOrName)return null;
-  const s=String(idOrName).trim().toLowerCase();
-  let bar=allBars.find(b=>(b.id||'').toString().toLowerCase()===s);
-  if(bar)return bar;
-  bar=allBars.find(b=>(b.name||'').toLowerCase().replace(/\s+/g,'-')===s.replace(/\s+/g,'-'));
-  if(bar)return bar;
-  bar=allBars.find(b=>(b.name||'').toLowerCase().includes(s)||s.includes((b.name||'').toLowerCase()));
-  return bar||null;
-}
-
-function appendChatMessage(role, text, barIds){
-  if(!chatMessages) return;
-  const div=document.createElement('div');
-  div.className='chat-msg ' + role;
-  div.innerHTML=escapeHtml(text);
-  if(barIds&&barIds.length&&typeof allBars!=='undefined'){
-    const list=document.createElement('div');
-    list.className='chat-bar-list';
-    const seen=new Set();
-    barIds.forEach(id=>{
-      const bar=allBars.find(b=>b.id===id)||findBarByIdOrName(id);
-      if(!bar||seen.has(bar.id))return;
-      seen.add(bar.id);
-      const a=document.createElement('a');
-      a.href='#';
-      a.textContent=bar.name+(bar.cheapest_beer_sek!=null?' · '+bar.cheapest_beer_sek+' kr':'');
-      a.addEventListener('click', function(e){ e.preventDefault(); closeChatPanel(); openSidebar(bar); });
-      list.appendChild(a);
-    });
-    div.appendChild(list);
-  }
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop=chatMessages.scrollHeight;
-}
-
-function clearAiSearch(){
-  aiFilterBarIds=null;
-  if(chatClearWrap) chatClearWrap.style.display='none';
-  applyFilters();
-}
+function clearAiSearch(){ aiFilterBarIds=null; applyFilters(); }
 window.clearAiSearch=clearAiSearch;
-if(chatClear) chatClear.addEventListener('click', clearAiSearch);
-if(chatSend) chatSend.addEventListener('click', sendChatMessage);
-if(chatInput) chatInput.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); sendChatMessage(); } });
-
-function localBarSearch(query){
-  if(!allBars||!allBars.length)return { barIds: [], reply: 'No bars loaded yet.' };
-  const q=query.toLowerCase().trim();
-  const words=q.split(/\s+/).filter(Boolean);
-  const vibeKeywords={ chill:'chill', party:'party', dating:'dating', date:'dating', 'girls night':'girls-night', 'girls-night':'girls-night', dance:'dance', dancing:'dance', gay:'', cheap:'', beer:'', late:'' };
-  const matched=[];
-  allBars.forEach(bar=>{
-    let score=0;
-    const name=(bar.name||'').toLowerCase();
-    const vibes=bar.vibes||[];
-    const danceNotes=(bar.dance_notes||'').toLowerCase();
-    const hasDance=bar.dance_floor==='yes'||/danc|dance/i.test(danceNotes);
-    for(const w of words){
-      if(vibeKeywords[w]==='chill'&&vibes.includes('chill'))score+=3;
-      else if((vibeKeywords[w]==='party'||w==='party')&&vibes.includes('party'))score+=3;
-      else if((vibeKeywords[w]==='dating'||w==='date')&&vibes.includes('dating'))score+=3;
-      else if((vibeKeywords[w]==='girls-night'||w==='girls')&&vibes.includes('girls-night'))score+=3;
-      else if((vibeKeywords[w]==='dance'||w==='dancing')&&(vibes.includes('party')||hasDance))score+=2;
-      else if(w==='gay'&&(name.includes('gay')||danceNotes.includes('gay')||vibes.some(v=>/gay|lgbt|queer/i.test(v))))score+=3;
-      else if((w==='cheap'||w==='budget')&&bar.cheapest_beer_sek!=null&&bar.cheapest_beer_sek<55)score+=2;
-      else if(w==='beer'&&bar.price_found)score+=1;
-      else if(name.includes(w))score+=2;
-      else if(danceNotes.includes(w))score+=1;
-    }
-    if(score>0)matched.push({ bar, score });
-  });
-  matched.sort((a,b)=>b.score-a.score);
-  const barIds=matched.slice(0,15).map(m=>m.bar.id);
-  const reply=barIds.length?('Found '+barIds.length+' bar'+(barIds.length===1?'':'s')+' matching your search.'):'No bars matched. Try "chill", "party", "dance" or a bar name.';
-  return { barIds, reply };
-}
-
-async function sendChatMessage(){
-  if(!chatInput) return;
-  const msg=(chatInput.value||'').trim();
-  if(!msg)return;
-  chatError.style.display='none';
-  chatError.textContent='';
-  appendChatMessage('user', msg);
-  chatInput.value='';
-  chatSend.disabled=true;
-  try{
-    const res=await fetch('/api/bar-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }) });
-    const data=await res.json().catch(()=>({}));
-    if(!res.ok){
-      var local=localBarSearch(msg);
-      aiFilterBarIds=local.barIds;
-      chatClearWrap.style.display=local.barIds.length?'block':'none';
-      applyFilters();
-      appendChatMessage('bot', local.reply, local.barIds);
-      if(data.error) { chatError.textContent='API: '+data.error; chatError.style.display='block'; }
-      return;
-    }
-    var ids=Array.isArray(data.barIds)?data.barIds:[];
-    var resolvedIds=ids.map(id=>{ var b=allBars.find(x=>x.id===id)||findBarByIdOrName(id); return b?b.id:null; }).filter(Boolean);
-    if(resolvedIds.length===0&&ids.length>0){ var local=localBarSearch(msg); resolvedIds=local.barIds; }
-    aiFilterBarIds=resolvedIds.length?resolvedIds:ids;
-    chatClearWrap.style.display=aiFilterBarIds.length?'block':'none';
-    applyFilters();
-    appendChatMessage('bot', data.reply||'Here are some matches.', aiFilterBarIds);
-  }catch(err){
-    console.error('Chat request failed:', err);
-    var local=localBarSearch(msg);
-    aiFilterBarIds=local.barIds;
-    chatClearWrap.style.display=local.barIds.length?'block':'none';
-    applyFilters();
-    appendChatMessage('bot', local.reply+(local.barIds.length?'':' (Server unreachable — run "node server.js" for AI search.)'), local.barIds);
-    if(!local.barIds.length){ chatError.textContent=err.message||'Network error'; chatError.style.display='block'; }
-  }finally{
-    chatSend.disabled=false;
-  }
-}
 
 function initDeepLink(){
   var params = new URLSearchParams(window.location.search);
