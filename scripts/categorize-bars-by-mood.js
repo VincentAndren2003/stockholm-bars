@@ -36,6 +36,13 @@ const MOODS = [
   'cheap_night_out' // Budget-friendly
 ];
 
+// Manual corrections for bars where we have strong local knowledge
+// and want to enforce specific moods regardless of LLM noise.
+const MANUAL_MOOD_OVERRIDES = {
+  // Example: classic cozy date bar at Mariatorget
+  'morfar-ginko': ['first_date', 'chill_date', 'chill_hangout', 'group_friends']
+};
+
 function getEnvKey(name) {
   if (process.env[name]) return process.env[name].trim();
   const envPath = path.resolve(__dirname, '../.env');
@@ -80,19 +87,32 @@ async function getPlaceDetailsWithReviews(apiKey, placeId) {
 }
 
 async function classifyBarWithOpenAI(apiKey, barContext) {
-  const systemPrompt = `You are a bar expert. Given information and reviews about a bar in Stockholm, assign one or more mood categories. 
+  const systemPrompt = `You are a Stockholm bar expert. Given structured information and real review snippets about a bar, assign one or more mood categories.
+
 Categories (use exactly these slugs, no others): ${MOODS.join(', ')}.
-- first_date: good for a first date (not too loud, cozy, easy to talk)
-- third_date: romantic, more intimate, good for a later date
-- chill_date: relaxed date vibe, low key
-- party_night: dancing, loud, night out
-- chill_hangout: casual hangout, not necessarily a date
-- group_friends: good for groups
-- cheap_night_out: budget-friendly
 
-Reply with ONLY a JSON array of slugs, e.g. ["chill_date","cheap_night_out"]. No explanation.`;
+Definitions (be strict and consistent):
+- first_date: Excellent for a **first date**. Cozy, intimate or romantic. Easy to talk (not too loud), feels a bit special, often wine/cocktails or nicer atmosphere. If multiple reviews clearly mention "date night", "first date", "romantic", or similar, strongly prefer including first_date.
+- third_date: Great for a **later date** once people know each other. Can be slightly more intimate, food- or wine-focused, or a bit more adventurous. Not mainly a cheap pre-party or loud student bar.
+- chill_date: Relaxed date vibe: comfortable, cozy, not stressful. Good for a casual date, even if it is not fancy.
+- party_night: Mainly for partying: loud, dancing, DJs, clubby, shots, big groups, pre-party/after-party, or strong "night out" energy.
+- chill_hangout: Casual hangout or local bar for friends. Good to sit and talk or have a beer, but not especially focused on romance.
+- group_friends: Specifically described as good for groups, big tables, after work, colleagues, birthdays, or large friend groups.
+- cheap_night_out: Strongly budget-focused: cheap beers, student vibe, explicit mentions of low prices or bargains.
 
-  const userPrompt = `Bar info and reviews:\n${barContext}\n\nReturn JSON array of mood slugs:`;
+Important rules:
+- Do NOT assign first_date or third_date to bars that are primarily loud, chaotic party spots unless reviews clearly describe them as nice for dates.
+- If reviews strongly mention cozy/romantic/vibey date atmosphere, ALWAYS include at least one of first_date, third_date, or chill_date.
+- Bars can have multiple moods. For example, a cozy wine bar that is also good for groups can be ["first_date","chill_hangout","group_friends"].
+- If information is very weak or generic, fall back to chill_hangout or group_friends based on what fits best, but avoid overusing first_date.
+
+Reply with ONLY a JSON array of slugs (no comments, no extra text), e.g. ["chill_date","cheap_night_out"].`;
+
+  const userPrompt = `Bar info and reviews (Stockholm):
+
+${barContext}
+
+Return ONLY a JSON array of mood slugs from this list: ${MOODS.join(', ')}.`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -171,30 +191,77 @@ async function main() {
       }
     }
 
-    const price = bar.price != null ? bar.price : 'unknown';
-    const rating = bar.rating != null ? bar.rating : 'unknown';
+    const price = bar.price != null ? Number(bar.price) : null;
+    const rating = bar.rating != null ? Number(bar.rating) : null;
     const reviewCount = bar.review_count != null ? bar.review_count : bar.user_ratings_total;
     const dance = bar.dance_floor || 'unknown';
-    const vibes = Array.isArray(bar.vibes) ? bar.vibes.join(', ') : (bar.vibes || '');
+    const vibesArr = Array.isArray(bar.vibes) ? bar.vibes : (bar.vibes ? String(bar.vibes).split(/[,;]/).map((v) => v.trim()).filter(Boolean) : []);
+    const vibes = vibesArr.join(', ');
+    const location = bar.correct_address || bar.location || '';
+
+    // Simple heuristic hint for the LLM: candidate date bar if decent rating, moderate price, and no dance floor.
+    const likelyDateHeuristic =
+      (rating != null && rating >= 4.0) &&
+      (price != null && price >= 60 && price <= 140) &&
+      (dance === 'no');
 
     const barContext = [
       `Name: ${name}`,
-      `Price (cheapest beer SEK): ${price}`,
-      `Rating: ${rating}`,
-      `Review count: ${reviewCount}`,
+      location ? `Location: ${location}` : null,
+      `Price (cheapest beer SEK): ${price != null ? price : 'unknown'}`,
+      `Rating: ${rating != null ? rating : 'unknown'}`,
+      `Review count: ${reviewCount != null ? reviewCount : 'unknown'}`,
       `Dance floor: ${dance}`,
-      `Vibes: ${vibes}`,
+      `Vibes: ${vibes || 'none'}`,
+      `Heuristic_likely_date_bar: ${likelyDateHeuristic ? 'yes' : 'no'}`,
       reviewsText ? `Reviews:\n${reviewsText}` : '(No review text)',
-    ].join('\n');
+    ].filter(Boolean).join('\n');
 
     try {
-      const moods = await classifyBarWithOpenAI(openaiKey, barContext);
+      const llmMoods = await classifyBarWithOpenAI(openaiKey, barContext);
       await sleep(300);
-      bar.moods = moods.length ? moods : (bar.moods || []);
+
+      // Start from any existing moods to keep previous manual edits,
+      // then merge in LLM output.
+      const finalMoods = Array.isArray(bar.moods) ? bar.moods.slice() : [];
+      for (const m of Array.isArray(llmMoods) ? llmMoods : []) {
+        if (MOODS.includes(m) && !finalMoods.includes(m)) finalMoods.push(m);
+      }
+
+      const textBlob = [
+        reviewsText || '',
+        vibesArr.join(' '),
+        location || '',
+      ].join(' ').toLowerCase();
+
+      const hasDateMood = finalMoods.some((m) =>
+        m === 'first_date' || m === 'third_date' || m === 'chill_date'
+      );
+
+      // If reviews clearly talk about dates/romance but no date mood was assigned,
+      // gently correct by adding a suitable date mood.
+      const dateRegex = /(date night|first date|romantic|cozy|cosy|intimate|dejta|dejten|dejtnight|vinbar|wine bar|cocktail bar)/i;
+      if (!hasDateMood && dateRegex.test(textBlob)) {
+        if (rating != null && rating >= 4.0 && price != null && price >= 70) {
+          if (!finalMoods.includes('first_date')) finalMoods.push('first_date');
+        } else {
+          if (!finalMoods.includes('chill_date')) finalMoods.push('chill_date');
+        }
+      }
+
+      // Apply manual overrides for bars we strongly care about.
+      const override = MANUAL_MOOD_OVERRIDES[bar.id];
+      if (override && Array.isArray(override)) {
+        for (const m of override) {
+          if (MOODS.includes(m) && !finalMoods.includes(m)) finalMoods.push(m);
+        }
+      }
+
+      bar.moods = finalMoods;
       done++;
     } catch (e) {
       console.warn(`[${i + 1}/${list.length}] ${name}: OpenAI error ${e.message}`);
-      bar.moods = bar.moods || [];
+      bar.moods = Array.isArray(bar.moods) ? bar.moods : [];
       failed++;
     }
 

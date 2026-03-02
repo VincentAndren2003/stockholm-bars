@@ -73,7 +73,8 @@
     "correct_address": "Långholmsgatan 27, 117 33 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "party_night"
+      "party_night",
+      "chill_date"
     ]
   },
   {
@@ -97,7 +98,8 @@
     "correct_address": "Högbergsgatan 33, 116 20 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -123,7 +125,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "first_date"
     ]
   },
   {
@@ -275,7 +278,8 @@
     "correct_address": "Götgatan 33, 116 20 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -350,7 +354,9 @@
     "correct_address": "Folkungagatan 97, 116 30 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "group_friends",
+      "chill_date"
     ]
   },
   {
@@ -376,7 +382,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -454,7 +461,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "chill_date"
+      "chill_date",
+      "first_date"
     ]
   },
   {
@@ -502,7 +510,8 @@
     "correct_address": "Ringvägen 147, 116 61 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -554,7 +563,8 @@
     "moods": [
       "party_night",
       "cheap_night_out",
-      "group_friends"
+      "group_friends",
+      "chill_hangout"
     ]
   },
   {
@@ -603,7 +613,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -627,7 +638,9 @@
     "correct_address": "Nytorgsgatan 33, 116 40 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "group_friends",
+      "chill_date"
     ]
   },
   {
@@ -652,7 +665,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -728,7 +742,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -803,7 +818,9 @@
     "correct_address": "Ringvägen 151, 116 31 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "first_date",
+      "chill_date"
     ]
   },
   {
@@ -929,7 +946,8 @@
     "correct_address": "Hornsgatan 82, 118 21 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "chill_date"
     ]
   },
   {
@@ -1006,7 +1024,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "first_date"
     ]
   },
   {
@@ -1158,7 +1177,8 @@
     "moods": [
       "chill_hangout",
       "cheap_night_out",
-      "group_friends"
+      "group_friends",
+      "chill_date"
     ]
   },
   {
@@ -1183,7 +1203,8 @@
     "correct_address": "Hornsbruksgatan 24, 117 34 Stockholm, Sverige",
     "moods": [
       "chill_date",
-      "chill_hangout"
+      "chill_hangout",
+      "first_date"
     ]
   },
   {
@@ -1260,7 +1281,8 @@
     "correct_address": "Bergsunds strand, 117 39 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -1309,7 +1331,8 @@
     "correct_address": "Hornsgatan 84, 118 21 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -1438,7 +1461,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "group_friends"
     ]
   },
   {
@@ -1487,7 +1511,8 @@
     "correct_address": "Hornsgatan 55, 118 49 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -1512,7 +1537,8 @@
     "correct_address": "Wollmar Yxkullsgatan 5, 118 50 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -1664,7 +1690,10 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "party_night",
+      "first_date",
+      "chill_date"
     ]
   },
   {
@@ -1740,7 +1769,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -1818,7 +1848,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "first_date"
     ]
   },
   {
@@ -1843,7 +1874,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -1918,7 +1950,9 @@
     "correct_address": "Ringvägen 153, 116 31 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date",
+      "group_friends"
     ]
   },
   {
@@ -1997,7 +2031,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "first_date"
     ]
   },
   {
@@ -2023,7 +2058,8 @@
     "moods": [
       "party_night",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_hangout"
     ]
   },
   {
@@ -2174,7 +2210,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -2274,7 +2311,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "first_date"
     ]
   },
   {
@@ -2348,7 +2386,8 @@
     "correct_address": "Folkungagatan 57-59, 116 22 Stockholm, Sverige",
     "moods": [
       "chill_hangout",
-      "cheap_night_out"
+      "cheap_night_out",
+      "group_friends"
     ]
   },
   {
@@ -2400,7 +2439,8 @@
       "chill_hangout",
       "group_friends",
       "party_night",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -2425,7 +2465,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "party_night"
     ]
   },
   {
@@ -2451,7 +2492,8 @@
     "moods": [
       "chill_date",
       "chill_hangout",
-      "group_friends"
+      "group_friends",
+      "first_date"
     ]
   },
   {
@@ -2477,7 +2519,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "chill_date"
     ]
   },
   {
@@ -2502,7 +2545,8 @@
     "moods": [
       "chill_hangout",
       "group_friends",
-      "chill_date"
+      "chill_date",
+      "first_date"
     ]
   },
   {
@@ -2606,7 +2650,8 @@
       "chill_date",
       "chill_hangout",
       "group_friends",
-      "cheap_night_out"
+      "cheap_night_out",
+      "first_date"
     ]
   },
   {
