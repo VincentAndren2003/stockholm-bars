@@ -21,10 +21,10 @@
     .logo span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
     .filter-bar{pointer-events:all;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(26,23,16,0.92);border:1px solid rgba(245,197,66,0.12);border-radius:12px;padding:6px 10px;backdrop-filter:blur(12px);}
     .filter-bar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-right:2px;}
-    .filter-hours,.filter-mood{display:flex;align-items:center;gap:4px;}
-    .filter-hours .hours-pill,.filter-mood .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
-    .filter-hours .hours-pill:hover,.filter-mood .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
-    .filter-hours .hours-pill.active,.filter-mood .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
+    .filter-mood{display:flex;align-items:center;gap:4px;}
+    .filter-mood .hours-pill{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:4px 10px;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .filter-mood .hours-pill:hover{color:var(--text);border-color:rgba(245,197,66,0.3);}
+    .filter-mood .hours-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.4);color:var(--gold);}
     .filter-bar input[type="range"]{appearance:none;-webkit-appearance:none;width:120px;height:3px;background:linear-gradient(to right, var(--gold) 0%, var(--gold) 50%, rgba(255,255,255,0.1) 50%);border-radius:2px;outline:none;}
     .filter-bar input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
     #price-display{font-size:13px;font-weight:500;color:var(--gold);min-width:60px;}
@@ -78,12 +78,11 @@
       .filter-bar.open .filter-bar-content{display:flex;}
       .filter-dropdown-backdrop{display:block;pointer-events:none;}
       .filter-bar.open + .filter-dropdown-backdrop{pointer-events:auto;}
-      .filter-bar-content .filter-hours,.filter-bar-content .filter-mood,.filter-bar-content .filter-actions{flex-wrap:wrap;}
+      .filter-bar-content .filter-mood{flex-wrap:wrap;}
     }
     @media (min-width:769px){
       .filter-bar-trigger{display:none !important;}
       .filter-bar-content{display:flex !important;flex-wrap:wrap;}
-      .filter-price-row{flex-basis:100%;margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);}
     }
     .search-loading .mini-spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:var(--dark);border-radius:50%;animation:spin 0.6s linear infinite;}
     .fav-btn{border:none;background:transparent;cursor:pointer;font-size:22px;padding:6px;transition:transform 0.2s, color 0.2s;}
@@ -93,17 +92,6 @@
     .fav-btn:hover.faved{color:#ff7a96;}
     .clear-filter-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
     .clear-filter-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);}
-    /* Near me, Favourites, Watchlist — action pills */
-    .filter-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-    .filter-actions .action-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:var(--text);}
-    .filter-actions .action-pill:hover{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.35);color:var(--gold);}
-    .filter-actions .action-pill.active{background:rgba(245,197,66,0.15);border-color:rgba(245,197,66,0.5);color:var(--gold);}
-    .filter-actions .action-pill.near-me-pill{border-color:rgba(94,203,122,0.4);background:rgba(94,203,122,0.08);}
-    .filter-actions .action-pill.near-me-pill:hover{background:rgba(94,203,122,0.18);border-color:var(--green);color:var(--green);}
-    .filter-actions .action-pill.fav-pill{border-color:rgba(232,93,122,0.35);background:rgba(232,93,122,0.06);color:var(--fav);}
-    .filter-actions .action-pill.fav-pill:hover,.filter-actions .action-pill.fav-pill.active{background:var(--fav-bg);border-color:var(--fav);color:#ff8fa3;}
-    .filter-actions .action-pill.watchlist-pill{border-color:rgba(245,197,66,0.3);background:rgba(245,197,66,0.06);}
-    .filter-actions .action-pill.watchlist-pill:hover,.filter-actions .action-pill.watchlist-pill.active{background:rgba(245,197,66,0.12);border-color:rgba(245,197,66,0.5);color:var(--gold);}
     .sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);}
     .suggest-btn{width:100%;padding:12px;background:transparent;border:1px solid rgba(245,197,66,0.3);color:var(--gold);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;}
     .suggest-btn:hover{background:rgba(245,197,66,0.08);border-color:var(--gold);}
@@ -221,14 +209,13 @@
     <h1>Billigaste Ölen</h1>
     <span>Stockholm Beer Prices</span>
   </a>
-  <button type="button" id="theme-toggle" aria-label="Toggle light theme">☀️</button>
   <div class="filter-bar" id="filter-bar">
     <button type="button" class="filter-bar-trigger" id="filter-bar-trigger" aria-expanded="false" aria-controls="filter-bar-content" aria-label="Open mood filters">
       <span>Mood</span>
       <span class="chevron" aria-hidden="true">▼</span>
     </button>
     <div class="filter-bar-content" id="filter-bar-content" role="region" aria-label="Mood filters">
-      <span class="filter-mood" role="group" aria-label="Mood filter">
+      <span class="filter-mood" role="group" aria-label="Mood filter (LLM-based)">
         <button type="button" class="hours-pill active" data-mood="" aria-pressed="true">All</button>
         <button type="button" class="hours-pill" data-mood="first_date" aria-pressed="false">First date</button>
         <button type="button" class="hours-pill" data-mood="third_date" aria-pressed="false">Third date</button>
@@ -238,11 +225,6 @@
         <button type="button" class="hours-pill" data-mood="group_friends" aria-pressed="false">Group</button>
         <button type="button" class="hours-pill" data-mood="cheap" aria-pressed="false">Cheap</button>
         <button type="button" class="hours-pill" data-mood="top_rated" aria-pressed="false">Top rated</button>
-      </span>
-      <span class="filter-actions" role="group" aria-label="Location and lists">
-        <button type="button" class="action-pill near-me-pill" id="near-me-btn" aria-label="Show bars near me">📍 Near me</button>
-        <button type="button" class="action-pill fav-pill" id="filter-fav-btn" data-hours="favourites" aria-pressed="false" title="Show only favourites">♥ Favourites</button>
-        <button type="button" class="action-pill watchlist-pill" id="filter-watchlist-btn" data-hours="watchlist" aria-pressed="false" title="Bars to check back">📌 Watchlist</button>
       </span>
     </div>
   </div>
@@ -369,7 +351,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 map.zoomControl.setPosition('bottomright');
 
-let allBars=[]; let markers=[]; let activeSidebarBar=null; let aiFilterBarIds=null; let visibleBarsForList=[]; let nearMeIds=null;
+let allBars=[]; let markers=[]; let activeSidebarBar=null; let aiFilterBarIds=null; let visibleBarsForList=[];
 
 var FAV_STORAGE_KEY = 'bar-favourites';
 var WATCHLIST_STORAGE_KEY = 'bar-watchlist';
@@ -1079,23 +1061,14 @@ document.addEventListener('click', function(e){
 }, true);
 
 function applyFilters(){
-  const hoursEl=document.querySelector('.filter-actions .action-pill.active[data-hours]');
-  const hoursVal=(hoursEl?.getAttribute('data-hours')||'').trim();
   const moodEl=document.querySelector('.filter-mood .hours-pill.active');
   const moodVal=(moodEl?.getAttribute('data-mood')||'').trim();
-  const priceVal=parseInt(document.getElementById('price-filter')?.value,10)||150;
   let filtered=allBars;
-  if(nearMeIds&&nearMeIds.length) filtered=filtered.filter(b=>nearMeIds.includes(b.id));
   const hasAiSearch=aiFilterBarIds&&aiFilterBarIds.length>0;
   if(hasAiSearch){ filtered=filtered.filter(b=>aiFilterBarIds.includes(b.id)); }
   if(moodVal){ filtered=filtered.filter(function(b){ return barMatchesMood(b,moodVal); }); }
-  if(hoursVal==='favourites'){ var favIds=getFavouriteIds(); filtered=filtered.filter(b=>favIds.includes(b.id)); }
-  if(hoursVal==='watchlist'){ var watchIds=getWatchlistIds(); filtered=filtered.filter(b=>watchIds.includes(b.id)); }
-  if(priceVal<150){
-    filtered=filtered.filter(b=>!b.price_found||b.cheapest_beer_sek<=priceVal);
-  }
   visibleBarsForList=filtered.filter(b=>b.lat&&b.lng);
-  renderMarkers(filtered, hoursVal);
+  renderMarkers(filtered, '');
   updateStats(filtered.filter(b=>b.price_found));
   document.getElementById('stat-bars').textContent=filtered.length;
   if(typeof renderBarList==='function') renderBarList();
@@ -1120,38 +1093,9 @@ document.querySelectorAll('.filter-mood .hours-pill').forEach(btn=>{
     applyFilters();
   });
 });
-document.querySelectorAll('.filter-actions .action-pill[data-hours]').forEach(btn=>{
-  btn.addEventListener('click', function(){
-    var group=this.closest('.filter-actions');
-    if(group) group.querySelectorAll('.action-pill[data-hours]').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
-    this.classList.toggle('active'); this.setAttribute('aria-pressed', this.classList.contains('active'));
-    applyFilters();
-  });
-});
-var nearMeBtn=document.getElementById('near-me-btn');
-if(nearMeBtn){
-  nearMeBtn.addEventListener('click', function(){
-    if(!navigator.geolocation){ alert('Geolocation not supported'); return; }
-    var btn=this; btn.disabled=true; btn.textContent='…';
-    navigator.geolocation.getCurrentPosition(function(pos){
-      var lat=pos.coords.latitude; var lng=pos.coords.longitude;
-      var R=6371;
-      function dist(b){ var dlat=(b.lat-lat)*Math.PI/180; var dlon=(b.lng-lng)*Math.PI/180; var a=Math.sin(dlat/2)*Math.sin(dlat/2)+Math.cos(lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dlon/2)*Math.sin(dlon/2); return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
-      var withDist=allBars.filter(function(b){ return b.lat&&b.lng; }).map(function(b){ return { bar: b, d: dist(b) }; });
-      withDist.sort(function(a,b){ return a.d-b.d; });
-      nearMeIds=withDist.filter(function(x){ return x.d<=5; }).map(function(x){ return x.bar.id; });
-      if(nearMeIds.length===0) nearMeIds=withDist.slice(0,30).map(function(x){ return x.bar.id; });
-      if(typeof map!=='undefined') map.setView([lat,lng],14);
-      applyFilters();
-      btn.disabled=false; btn.textContent='📍 Near me';
-    }, function(){ btn.disabled=false; btn.textContent='📍 Near me'; alert('Could not get location'); });
-  });
-}
 function clearAllFilters(){
   aiFilterBarIds=null;
-  nearMeIds=null;
   document.querySelectorAll('.filter-mood .hours-pill').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
-  document.querySelectorAll('.filter-actions .action-pill[data-hours]').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
   var allMood=document.querySelector('.filter-mood .hours-pill[data-mood=""]');
   if(allMood){ allMood.classList.add('active'); allMood.setAttribute('aria-pressed','true'); }
   applyFilters();
