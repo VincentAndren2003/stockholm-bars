@@ -1,4 +1,4 @@
-const CACHE = 'billigaste-olen-v1';
+const CACHE = 'billigaste-olen-v2';
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (cache) {
